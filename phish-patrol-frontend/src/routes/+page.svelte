@@ -1,11 +1,15 @@
 <script lang="ts">
-  import { invalidateAll } from '$app/forms';
-  import type { PageData } from './$types';
+  import { invalidateAll } from '$app/navigation';
+  import { ScenarioType} from '$lib/types';
+  import type { Scenario } from '$lib/types';
 
-  export let data: PageData;
+  export let data: {
+    scenario: Scenario;
+  };
 
   let isAnswered: boolean = false;
   let userChoice: boolean | null = null;
+  let feedbackMessage: string = "";
 
   /**
    * Handles the user's answer submission.
@@ -14,8 +18,43 @@
   function handleAnswer(choice: boolean): void {
     userChoice = choice;
     isAnswered = true;
-    if (userChoice === data.scenario.isScam) {
-	// implement score or lives here
+    //Calls getFeedbackMessage function
+    feedbackMessage = getFeedbackMessage(userChoice, data.scenario); 
+
+	//Implement difficulty progression here
+
+  }
+
+
+  //Take userChoice and scenario data and sends back a message for correct/incorrect
+  function getFeedbackMessage(userChoice: boolean, scenario: Scenario): string
+  {
+    //To hold type for scenario
+    let msgType = "";
+
+    //Checks if scenario type is an email or sms and assigns it to msgType
+    if (scenario.type === ScenarioType.EMAIL) {
+      msgType = "email";
+    } else {
+      msgType = "SMS message";
+    }
+    //Checks if user choice is correct 
+    const isCorrect = userChoice === scenario.isScam;
+
+    //Returns a message with correct or incorrect depending on user choice
+    if (isCorrect) {
+      return `<strong>Correct!</strong> \n\n ${scenario.explanation}`;
+    } else {
+      //Prints out incorrect with an explanation if it was a scam or not and why, including msgType
+      let feedbackMsg = "<strong>Incorrect!</strong>\n\n This " + msgType + " is actually ";
+
+        if (scenario.isScam) {
+          feedbackMsg += "a phishing attempt.";
+        } else {
+           feedbackMsg += "legitimate, ";
+        }
+        feedbackMsg += " " + scenario.explanation;
+        return feedbackMsg;
     }
   }
 
@@ -30,13 +69,14 @@
   }
 </script>
 
-<div class="container">
-  
-  <header>
-    <h1>Phish Patrol 🕵️</h1>
+ <header>
+    <h1>PHISH PATROL</h1>
   </header>
-
-  {#if data.scenario && !data.scenario.error}
+<!-----------------------------SCENARIO PAGE----------------------------------------->
+<div class="container">
+  <!---Prints out New with the type of scenario it is-->
+  <h2>NEW {data.scenario.type} </h2>
+  {#if data.scenario}
     <main>
       <div class="scenario-box">
         <p>{data.scenario.content}</p>
@@ -44,7 +84,7 @@
 
       {#if !isAnswered}
         <div class="action-area">
-          <p class="prompt">Is this a scam or legitimate?</p>
+          <!-----<p class="prompt">Is this a scam or legitimate?</p>--->
           <div class="button-group">
             <button class="btn btn-scam" on:click={() => handleAnswer(true)}>
               Scam
@@ -55,48 +95,64 @@
           </div>
         </div>
       {/if}
+      <!---Feedback box------>
+      {#if isAnswered}
+      <div class="feedback-box">
+        <p>{@html feedbackMessage}</p>
+        <button class="btn btn-next" on:click={handleNext}>Next Scenario</button>
+      </div>
+      {/if}
     </main>
-  {:else}
-     <p class="error-message">{data.scenario?.error || "An unknown error occurred."}</p>
-  {/if}
+ {/if}
 </div>
 
+<!-----------------------------------STYLES------------------------------------->
 <style>
   .container {
     max-width: 650px;
     margin: 2rem auto;
     padding: 2rem;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: 'Franklin Gothic Medium', Arial, sans-serif;
+    box-shadow: 1px 1px 15px rgba(22, 22, 22, 0.1);
     text-align: center;
+    background-color: #adadad3a;
+    border-radius: 8px;
   }
 
   header h1 {
     font-size: 2.5rem;
-    color: #0056b3;
+    font-family:'Orbitron';
+    color: #040404;
     margin-bottom: 0.5rem;
+    text-align: center;
   }
 
   /* Scenario & Action Styles */
   .scenario-box {
-    padding: 1.5rem;
-    border: 1px solid #dee2e6;
+    padding: 1.0rem;
+    border: 1px solid #354758;
     border-radius: 8px;
     background-color: #ffffff;
     margin-bottom: 2rem;
     text-align: left;
     white-space: pre-wrap;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Franklin Gothic Medium', Arial, sans-serif;
     font-size: 1.1rem;
     line-height: 1.6;
   }
-
-  .prompt {
-    margin-bottom: 1rem;
+  
+  /* Displays the feedback after choice*/
+  .feedback-box {
+    background-color: #e9ecef;
     font-size: 1.2rem;
-    font-weight: 500;
+    white-space: pre-wrap;
+    color: #212529;
+    max-width: auto;
+    text-wrap: balance;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
   }
 
   .button-group {
@@ -106,13 +162,13 @@
   }
 
   .btn {
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
+    padding: 0.75rem 1.0rem;
+    font-size: 1.2rem;
     font-weight: bold;
+    font-family: 'Franklin Gothic Medium', Arial, sans-serif;
     color: white;
     border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    border-radius: 8px;
     transition: background-color 0.2s ease, transform 0.1s ease;
   }
 
@@ -130,6 +186,11 @@
 
   .btn-legit {
     background-color: #28a745;
+  }
+
+  .btn-next {
+    background-color: #0a0a0a;
+    font-size: 1.1rem;
   }
 
   .error-message {
