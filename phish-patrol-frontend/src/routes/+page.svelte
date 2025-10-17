@@ -1,201 +1,302 @@
 <script lang="ts">
-  import { invalidateAll } from '$app/navigation';
-  import { ScenarioType} from '$lib/types';
-  import type { Scenario } from '$lib/types';
-
-  export let data: {
-    scenario: Scenario;
-  };
-
-  let isAnswered: boolean = false;
-  let userChoice: boolean | null = null;
-  let feedbackMessage: string = "";
-
-  /**
-   * Handles the user's answer submission.
-   * @param choice - The user's guess (true if they think it's a scam).
-   */
-  function handleAnswer(choice: boolean): void {
-    userChoice = choice;
-    isAnswered = true;
-    //Calls getFeedbackMessage function
-    feedbackMessage = getFeedbackMessage(userChoice, data.scenario); 
-
-	//Implement difficulty progression here
-
-  }
 
 
-  //Take userChoice and scenario data and sends back a message for correct/incorrect
-  function getFeedbackMessage(userChoice: boolean, scenario: Scenario): string
-  {
-    //To hold type for scenario
-    let msgType = "";
-
-    //Checks if scenario type is an email or sms and assigns it to msgType
-    if (scenario.type === ScenarioType.EMAIL) {
-      msgType = "email";
-    } else {
-      msgType = "SMS message";
-    }
-    //Checks if user choice is correct 
-    const isCorrect = userChoice === scenario.isScam;
-
-    //Returns a message with correct or incorrect depending on user choice
-    if (isCorrect) {
-      return `<strong>Correct!</strong> \n\n ${scenario.explanation}`;
-    } else {
-      //Prints out incorrect with an explanation if it was a scam or not and why, including msgType
-      let feedbackMsg = "<strong>Incorrect!</strong>\n\n This " + msgType + " is actually ";
-
-        if (scenario.isScam) {
-          feedbackMsg += "a phishing attempt.";
-        } else {
-           feedbackMsg += "legitimate, ";
-        }
-        feedbackMsg += " " + scenario.explanation;
-        return feedbackMsg;
-    }
-  }
-
-  /**
-   * Resets the state and triggers the `load` function again to get a new scenario.
-   */
-  function handleNext(): void {
-    isAnswered = false;
-    userChoice = null;
-    // invalidateAll() tells SvelteKit to re-run all active `load` functions.
-    invalidateAll();
-  }
 </script>
 
- <header>
-    <h1>PHISH PATROL</h1>
-  </header>
-<!-----------------------------SCENARIO PAGE----------------------------------------->
-<div class="container">
-  <!---Prints out New with the type of scenario it is-->
-  <h2>NEW {data.scenario.type} </h2>
-  {#if data.scenario}
-    <main>
-      <div class="scenario-box">
-        <p>{data.scenario.content}</p>
-      </div>
 
-      {#if !isAnswered}
-        <div class="action-area">
-          <!-----<p class="prompt">Is this a scam or legitimate?</p>--->
-          <div class="button-group">
-            <button class="btn btn-scam" on:click={() => handleAnswer(true)}>
-              Scam
-            </button>
-            <button class="btn btn-legit" on:click={() => handleAnswer(false)}>
-              Legit
-            </button>
-          </div>
-        </div>
-      {/if}
-      <!---Feedback box------>
-      {#if isAnswered}
-      <div class="feedback-box">
-        <p>{@html feedbackMessage}</p>
-        <button class="btn btn-next" on:click={handleNext}>Next Scenario</button>
+<!-----------------------------DESKTOP + TASKBAR PAGE----------------------------------------->
+
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<div class="desktop">
+  <header class="header">
+    <div class="header-content">
+      <h1>PHISH PATROL</h1>
+      <img src="/icons/fishing.png" alt="Fish" class="logo"/>
+      <!----<a href="https://www.flaticon.com/free-icons/fishing" title="fishing icons">Fishing icons created by Hilmy Abiyyu A. - Flaticon</a>-->
+    </div>
+  </header>
+
+  <div class="icons">
+    <div class="icon">
+        <img src="/icons/gmail.png" alt="Email" class="icon-img"/>
+        <!-----<<a href="https://www.flaticon.com/free-icons/gmail" title="gmail icons">Gmail icons created by Pixel perfect - Flaticon</a>-->
+        <div class="icon-label">Email</div>
+    </div>
+
+    <div class="icon">
+        <img src="/icons/chat.png" alt="SMS" class="icon-img"/>
+        <!----<a href="https://www.flaticon.com/free-icons/message" title="message icons">Message icons created by Freepik - Flaticon</a>-->
+        <div class="icon-label">Messages</div>
+    </div>
+  </div>
+
+
+  <div class="taskbar">
+
+    <!-----------Left Items------------>
+    <div class="taskbar-left">
+      <div class="left-item">
+          <img src="/icons/play.png" alt="Play" class="left-icons"/>
+        <!-----<a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a>-->
+        <div class="left-label">Play</div>
       </div>
-      {/if}
-    </main>
- {/if}
+      <div class="left-item">
+        <img src="/icons/book.png" alt="Resources" class="left-icons"/>
+        <div class="left-label">Resources</div>
+      </div>
+      <div class="left-item">
+          <img src="/icons/tutorial.png" alt="Tutorial" class="left-icons"/>
+        <!-----<a href="https://www.flaticon.com/free-icons/video-tutorial" title="video tutorial icons">Video tutorial icons created by Freepik - Flaticon</a>-->
+        <div class="left-label">Tutorial</div>
+      </div>
+    </div>
+
+    <!-----------Center Items-------------->
+    <div class="taskbar-center">
+      <div class="search-container">
+          <input type="text" class="search-input" placeholder="Search database..."/>
+      </div>
+    </div>
+
+    <!-----------Right Items------------->
+    <div class="taskbar-right">
+      <div class="wifi">
+        <img src="/icons/wifi.png" alt="Wifi" class="right-icons">
+        <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
+        </div>
+      <div class="battery">
+        <img src="/icons/battery.png" alt="Battery" class="right-icons"/>
+        <!--<a href="https://www.flaticon.com/free-icons/battery" title="battery icons">Battery icons created by Stockio - Flaticon</a>-->
+      </div>
+      <div class="datetime">
+        <div class="clock">11:52 AM</div>
+        <div class="date">10/31/2025</div>
+      </div>
+    </div>
+  </div>
 </div>
+      
 
 <!-----------------------------------STYLES------------------------------------->
 <style>
-  .container {
-    max-width: 650px;
-    margin: 2rem auto;
-    padding: 2rem;
-    font-family: 'Franklin Gothic Medium', Arial, sans-serif;
-    box-shadow: 1px 1px 15px rgba(22, 22, 22, 0.1);
-    text-align: center;
-    background-color: #adadad3a;
-    border-radius: 8px;
+
+  :global(html,body) {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .desktop {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: url('/background/desktop.png') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Segoe UI', sans-serif;
+    color: white;
+    flex-wrap: wrap;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
   }
 
   header h1 {
-    font-size: 2.5rem;
-    font-family:'Orbitron';
-    color: #040404;
-    margin-bottom: 0.5rem;
+    font-family: 'Roboto Mono';
+    font-style: normal;
+    font-weight: 700;
+    font-size: 48px;
+    line-height: 140%;
     text-align: center;
+    letter-spacing: 0.15em;
+    color: #000000;
+    mix-blend-mode: hard-light;
+    opacity: 0.8;
   }
 
-  /* Scenario & Action Styles */
-  .scenario-box {
-    padding: 1.0rem;
-    border: 1px solid #354758;
-    border-radius: 8px;
-    background-color: #ffffff;
-    margin-bottom: 2rem;
-    text-align: left;
-    white-space: pre-wrap;
-    font-family: 'Franklin Gothic Medium', Arial, sans-serif;
-    font-size: 1.1rem;
-    line-height: 1.6;
+  .logo {
+    height: 65px;
+    width: 65px;
+    line-height: 140%;
+    text-align: center;
+
+  }
+
+  /* Icons */
+  .icons {
+    position: absolute;
+    top: 80px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
   
-  /* Displays the feedback after choice*/
-  .feedback-box {
-    background-color: #e9ecef;
-    font-size: 1.2rem;
-    white-space: pre-wrap;
-    color: #212529;
-    max-width: auto;
-    text-wrap: balance;
+  .icon {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    justify-content: flex-start;
+    gap: 4px;
+    width: 100px;
+    cursor: pointer;
+    user-select: none;
   }
 
-  .button-group {
+  .icon-img {
+    width: 65px;
+    height: 65px;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.6));
+  }
+
+  .icon-label {
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;  
+    letter-spacing: 1px;
+    text-shadow:   
+    -1px -1px 0 #2a2699d1,
+     1px -1px 0 #2a2699d1,
+    -1px  1px 0 #2a2699d1,
+     1px  1px 0 #2a2699d1;
+  }
+
+
+  /* Taskbar */
+
+  .taskbar {
     display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+    min-width: 0;
+    height: 78px;
+    padding: 0 16px;
+    background: #b9b2b29e;
+    flex-wrap: wrap;
+  }
+
+  .taskbar-center, .taskbar-left, .taskbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .taskbar-center {
     justify-content: center;
-    gap: 1rem;
+    flex: 0 1 300px;
   }
 
-  .btn {
-    padding: 0.75rem 1.0rem;
-    font-size: 1.2rem;
-    font-weight: bold;
-    font-family: 'Franklin Gothic Medium', Arial, sans-serif;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    transition: background-color 0.2s ease, transform 0.1s ease;
-  }
-
-  .btn:hover {
-    opacity: 0.9;
+  .taskbar-right {
+    justify-content: flex-end;
   }
   
-  .btn:active {
-    transform: scale(0.98);
+  /* Taskbar Left */
+
+  .taskbar-left {
+    display: flex;
+    gap: 40px;
+    padding: 10px;
+    flex-wrap: wrap;
   }
 
-  .btn-scam {
-    background-color: #dc3545;
+  .left-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    user-select: none;
+    font-size: 12px;
   }
 
-  .btn-legit {
-    background-color: #28a745;
+  .left-icons {
+    width: 50px;
+    height: 50px;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.6));
   }
 
-  .btn-next {
-    background-color: #0a0a0a;
-    font-size: 1.1rem;
+  .left-label {
+    margin-top: 2px;
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;  
+    letter-spacing: 1px;
+    text-shadow:   
+    -1px -1px 0 #2a2699d1,
+     1px -1px 0 #2a2699d1,
+    -1px  1px 0 #2a2699d1,
+     1px  1px 0 #2a2699d1;
   }
 
-  .error-message {
-    color: #dc3545;
-    font-size: 1.2rem;
-    padding: 2rem;
+
+  /* Search Bar */
+
+  .search-container {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    padding: 0 12px;
+    flex-wrap: wrap;
   }
+
+  .search-input {
+    padding: 6px 10px;
+    font-size: 15px;
+    border-radius: 6px;
+    background-color: #e0e0e0;
+    width: 100%;
+    max-width: 250%;
+    box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
+  }
+
+  /* Taskbar Right */
+  
+  .taskbar-right {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+  }
+
+  .right-icons {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    padding: 12px;
+  }
+
+  .datetime {
+    display: flex;
+    padding: 10px;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    color: rgb(0, 0, 0);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.1px;
+    text-shadow:   
+    .5px 0px 0 rgba(255, 255, 255, 0.653),
+     0px 0px 0 rgba(255, 255, 255, 0.653),
+    0px  0px 0 rgba(255, 255, 255, 0.653),
+     0px  0px 0 rgba(255, 255, 255, 0.653)
+    
+  }
+
+
+
+  
 </style>
