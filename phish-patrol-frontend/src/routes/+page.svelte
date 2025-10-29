@@ -1,12 +1,7 @@
 <script lang="ts">
-  import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
-  import DesktopIcons from '$lib/components/DesktopIcons.svelte';
-  
-  
-  let showLogin = true; 
-  
-  
 
+import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
+import{healthbar} from '$lib/stores/stores'
 import DesktopIcons from '$lib/components/DesktopIcons.svelte';
 import MessageWindow from '$lib/components/MessageWindow.svelte'; 
 import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
@@ -16,6 +11,8 @@ import { get } from 'svelte/store';
 
 let showMessages = false;
 let currentScenario: Scenario | null = null;
+let showLogin = true; 
+  
 
 // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
 function openMessages() {
@@ -78,7 +75,7 @@ function handleComplete() {
     <!-----------Left Items------------>
     <div class="taskbar-left">
       <div class="left-item">
-          <img src="/icons/play.png" alt="Play" class="left-icons"/>
+          <img src="/icons/play.png" alt="Play" class="left-icons" on:click = {()=>healthbar.update(n=>n-10)}/>
         <!-----<a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a>-->
         <div class="left-label">Play</div>
       </div>
@@ -107,7 +104,8 @@ function handleComplete() {
         <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
         </div>
       <div class="battery">
-        <img src="/icons/battery.png" alt="Battery" class="right-icons"/>
+        <!-- <img src="/icons/battery.png" alt="Battery" class="right-icons"/> -->
+        <div id = "battery" style:--life="{$healthbar-10}%"></div>
         <!--<a href="https://www.flaticon.com/free-icons/battery" title="battery icons">Battery icons created by Stockio - Flaticon</a>-->
       </div>
       <div class="datetime">
@@ -295,5 +293,38 @@ function handleComplete() {
      0px 0px 0 rgba(255, 255, 255, 0.653),
     0px  0px 0 rgba(255, 255, 255, 0.653),
      0px  0px 0 rgba(255, 255, 255, 0.653)
+  }
+
+  #battery {
+    height: 20px;
+    width: 30px;
+    border: 2px solid black;
+    border-radius: 5px;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      height: 10px;
+      width: 7px;
+      left: 100%;
+      top: 5px;
+      background-color: black;
+      border-radius: 4px;
+
+    }
+
+    &::before{
+      content: "";
+      height: 16px;
+      width: var(--life);
+      background-color: black;
+      position: absolute;
+      top: 2px;
+      left: 1px;
+      
+
+    }
+
   }
 </style>
