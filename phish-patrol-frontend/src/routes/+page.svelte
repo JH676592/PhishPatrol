@@ -1,5 +1,11 @@
 <script lang="ts">
+  import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
 
+  let showLogin = true; 
+
+  function closeLogin() {
+    showLogin = false;
+  }
 
 </script>
 
@@ -78,6 +84,10 @@
     </div>
   </div>
 </div>
+<!--Login Modal on site launch-->
+{#if showLogin}
+  <LoginModal />
+{/if}
       
 
 <!-----------------------------------STYLES------------------------------------->
