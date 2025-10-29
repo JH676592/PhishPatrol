@@ -1,6 +1,6 @@
 <script lang="ts">
 
-
+import DesktopIcons from '$lib/components/DesktopIcons.svelte';
 </script>
 
 
@@ -19,20 +19,7 @@
     </div>
   </header>
 
-  <div class="icons">
-    <div class="icon">
-        <img src="/icons/gmail.png" alt="Email" class="icon-img"/>
-        <!-----<<a href="https://www.flaticon.com/free-icons/gmail" title="gmail icons">Gmail icons created by Pixel perfect - Flaticon</a>-->
-        <div class="icon-label">Email</div>
-    </div>
-
-    <div class="icon">
-        <img src="/icons/chat.png" alt="SMS" class="icon-img"/>
-        <!----<a href="https://www.flaticon.com/free-icons/message" title="message icons">Message icons created by Freepik - Flaticon</a>-->
-        <div class="icon-label">Messages</div>
-    </div>
-  </div>
-
+  <DesktopIcons />
 
   <div class="taskbar">
 
@@ -131,46 +118,6 @@
     text-align: center;
 
   }
-
-  /* Icons */
-  .icons {
-    position: absolute;
-    top: 80px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .icon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 4px;
-    width: 100px;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .icon-img {
-    width: 65px;
-    height: 65px;
-    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.6));
-  }
-
-  .icon-label {
-    font-size: 14px;
-    font-weight: 800;
-    text-align: center;  
-    letter-spacing: 1px;
-    text-shadow:   
-    -1px -1px 0 #2a2699d1,
-     1px -1px 0 #2a2699d1,
-    -1px  1px 0 #2a2699d1,
-     1px  1px 0 #2a2699d1;
-  }
-
 
   /* Taskbar */
 
@@ -293,10 +240,5 @@
      0px 0px 0 rgba(255, 255, 255, 0.653),
     0px  0px 0 rgba(255, 255, 255, 0.653),
      0px  0px 0 rgba(255, 255, 255, 0.653)
-    
   }
-
-
-
-  
 </style>
