@@ -15,7 +15,7 @@
     <div class="icon-label">Email</div>
   </a>
 
-  <a href="/sms" class="icon">
+  <a href="/messages" class="icon">
     {#if smsCount > 0}
       <div class="badge">{smsCount}</div>
     {/if}

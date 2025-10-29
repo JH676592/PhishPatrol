@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type, ApiError } from "@google/genai";
 import { GEMINI_API_KEY } from '$env/static/private';
 import { addScenario } from '$lib/server/scenarioStore';
 import type { Scenario } from "$lib/types";
@@ -11,6 +11,11 @@ const prompts = [
 
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
 const ai = new GoogleGenAI({apiKey: GEMINI_API_KEY});
+
+async function sleep(ms: number): Promise<void> {
+    return new Promise(
+        (resolve) => setTimeout(resolve, ms));
+}
 
 async function generateAndStoreScenario() {
   try {
@@ -37,8 +42,12 @@ async function generateAndStoreScenario() {
     const responseText = response.text;
     const scenario = JSON.parse(responseText) as Omit<Scenario, 'id'>;
     addScenario(scenario);
-
   } catch (error) {
+    if (error instanceof ApiError) {
+      console.error("[Gemini Task] Gemini overloaded - waiting to cool down");
+      sleep(10000);
+      return;
+    }
     console.error("[Gemini Task] Error generating scenario:", error);
   }
 }
