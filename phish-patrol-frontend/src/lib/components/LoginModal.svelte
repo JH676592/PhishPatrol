@@ -31,6 +31,14 @@
   }
 
   async function register() {
+    if (!username.trim() || !password.trim()) {
+      alert('Username and password are required.');
+      return;
+    } else if (password.length < 8){
+      alert('The password needs to have at least 8 characters.');
+      return;
+    }
+
     const res = await fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -54,7 +62,7 @@
   </div>
 
   <div class="content">
-    <h2>Login</h2>
+    <h2 class="login-title">Login</h2>
     <input bind:value={username} placeholder="Username" />
     <input bind:value={password} type="password" placeholder="Password" />
 
@@ -120,7 +128,7 @@
     text-align: center;
   }
 
-  h2 {
+  .login-title {
     color: #374151;
     margin-top: 0.1rem;
   }
@@ -162,6 +170,7 @@
     font-size: 0.6rem;
     color: #374151;
     margin-top: 1rem;
+    margin-bottom: 0;
   }
 
   .register-btn {

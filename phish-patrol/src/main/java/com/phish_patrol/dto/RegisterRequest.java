@@ -3,6 +3,7 @@ package com.phish_patrol.dto;
 public class RegisterRequest { // maybe add email idk
     private String username;
     private String password;
+    private String email;
 
     // Getters and setters
     public String getUsername() { return username; }
@@ -10,4 +11,7 @@ public class RegisterRequest { // maybe add email idk
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 }
