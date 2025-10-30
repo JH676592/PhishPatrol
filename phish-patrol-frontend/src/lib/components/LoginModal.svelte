@@ -3,12 +3,16 @@
 
   let username = '';
   let password = '';
-  export let visible = true; // control modal visibility
+  export const visibleStore = writable(true); // control modal visibility
 
   export const tokenStore = writable('');
 
   function closeModal() {
-    visible = false;
+    visibleStore.set(false);
+  }
+
+  function openModal() {
+    visibleStore.set(true);
   }
 
   async function login() {
@@ -54,7 +58,7 @@
   }
 </script>
 
-{#if visible}
+{#if $visibleStore}
 <div class="modal">
   <div class="title-bar">
     <span class="window-title">Phish Patrol</span>
@@ -73,6 +77,12 @@
     </p>
     <button class="register-btn" on:click={register}>Register</button>
   </div>
+</div>
+{/if}
+
+{#if !$visibleStore && !$tokenStore}
+<div class="login-container">
+  <button class="login" on:click={openModal}>Login?</button>
 </div>
 {/if}
 
@@ -181,4 +191,26 @@
   .register-btn:hover {
     background-color: #059669;
   }
+
+  .login-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    z-index: 2000;
+}
+
+.login {
+  font-family: 'Roboto Mono', monospace;
+  background-color: #5734f0;
+  color: white;
+  padding: 0.75rem 1.2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  margin-left: 92%;
+  margin-bottom: 42%;
+}
 </style>
