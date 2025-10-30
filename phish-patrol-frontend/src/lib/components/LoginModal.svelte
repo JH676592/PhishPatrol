@@ -3,15 +3,22 @@
 
   let username = '';
   let password = '';
+  let email = '';
   export const visibleStore = writable(true); // control modal visibility
 
   export const tokenStore = writable('');
 
+  // chaniging modal to Register vars
+  let loginTitle = "Login"
+  export const loginVisibleStore = writable(true);
+
   function closeModal() {
     visibleStore.set(false);
+    loginVisibleStore.set(true);
   }
 
   function openModal() {
+    loginTitle = "Login"
     visibleStore.set(true);
   }
 
@@ -35,6 +42,12 @@
   }
 
   async function register() {
+    if (loginTitle == "Login"){
+      loginTitle = "Register";
+      loginVisibleStore.set(false);
+      return;
+    }
+
     if (!username.trim() || !password.trim()) {
       alert('Username and password are required.');
       return;
@@ -51,6 +64,8 @@
 
     if (res.ok) {
       alert('Registration successful!');
+      loginTitle = "Login";
+      loginVisibleStore.set(true);
     } else {
       const errorText = await res.text();
       alert('Registration failed: ' + errorText);
@@ -66,15 +81,21 @@
   </div>
 
   <div class="content">
-    <h2 class="login-title">Login</h2>
+    <h2 class="login-title">{loginTitle}</h2>
     <input bind:value={username} placeholder="Username" />
     <input bind:value={password} type="password" placeholder="Password" />
+    {#if !$loginVisibleStore}
+    <input bind:value={email} type="email" placeholder="Email (Optional)" />
+    {/if}
 
+    {#if $loginVisibleStore}
     <button class="login-btn" on:click={login}>Login</button>
 
     <p class="register-text">
       Don't have an account?
     </p>
+    {/if}
+
     <button class="register-btn" on:click={register}>Register</button>
   </div>
 </div>
