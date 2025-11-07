@@ -5,12 +5,18 @@
   let password = '';
   let email = '';
   export const visibleStore = writable(true); // control modal visibility
+  let errorRegisterText = '';
 
   export const tokenStore = writable('');
 
   // chaniging modal to Register vars
   let loginTitle = "Login"
   export const loginVisibleStore = writable(true);
+
+  export const errorIncorrectLogin = writable(false), 
+  errorUserAndPass = writable(false), 
+  errorPasswordLength = writable(false),
+  errorRegister = writable(false);
 
   function closeModal() {
     visibleStore.set(false);
@@ -36,12 +42,17 @@
       alert('Login successful!');
       closeModal();
     } else {
-      const errorText = await res.text();
-      alert('Login failed: ' + errorText);
+      errorIncorrectLogin.set(true);
     }
   }
 
   async function register() {
+    /*have to set all errors to default*/
+    errorIncorrectLogin.set(false);
+    errorPasswordLength.set(false);
+    errorUserAndPass.set(false);
+    errorRegister.set(false);
+
     if (loginTitle == "Login"){
       loginTitle = "Register";
       loginVisibleStore.set(false);
@@ -49,10 +60,10 @@
     }
 
     if (!username.trim() || !password.trim()) {
-      alert('Username and password are required.');
+      errorUserAndPass.set(true);
       return;
     } else if (password.length < 8){
-      alert('The password needs to have at least 8 characters.');
+      errorPasswordLength.set(true);
       return;
     }
 
@@ -68,6 +79,8 @@
       loginVisibleStore.set(true);
     } else {
       const errorText = await res.text();
+      errorRegisterText = errorText;
+      errorRegister.set(true);
       alert('Registration failed: ' + errorText);
     }
   }
@@ -90,6 +103,9 @@
 
     {#if $loginVisibleStore}
     <button class="login-btn" on:click={login}>Login</button>
+    {#if $errorIncorrectLogin}
+    <p class="login-error">Invalid Credentials. Try Again.</p>
+    {/if}
 
     <p class="register-text">
       Don't have an account?
@@ -97,6 +113,15 @@
     {/if}
 
     <button class="register-btn" on:click={register}>Register</button>
+    {#if $errorUserAndPass}
+    <p class="register-error">Username and password are required</p>
+    {/if}
+    {#if $errorPasswordLength}
+    <p class="register-error">The password needs to have at least 8 characters</p>
+    {/if}
+    {#if $errorRegister}
+    <p class="register-error">{errorRegisterText}</p>
+    {/if}  
   </div>
 </div>
 {/if}
@@ -197,6 +222,12 @@
     background-color: #2563eb;
   }
 
+  .login-error{
+    font-size: 0.7rem;
+    color: #df0808;
+    margin: 0%;
+  }
+
   .register-text {
     font-size: 0.6rem;
     color: #374151;
@@ -211,6 +242,12 @@
 
   .register-btn:hover {
     background-color: #059669;
+  }
+
+  .register-error{
+    font-size: 0.7rem;
+    color: #df0808;
+    margin: 0%;
   }
 
   .login-container {
