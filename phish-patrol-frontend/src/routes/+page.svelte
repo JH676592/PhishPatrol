@@ -3,10 +3,6 @@
 
   let showLogin = true; 
 
-  function closeLogin() {
-    showLogin = false;
-  }
-
 </script>
 
 

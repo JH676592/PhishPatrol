@@ -103,7 +103,7 @@
 
 {#if !$visibleStore && !$tokenStore}
 <div class="login-container">
-  <button class="login" on:click={openModal}>Login?</button>
+  <button class="login" on:click={openModal}>Login</button>
 </div>
 {/if}
 
@@ -231,7 +231,8 @@
   padding: 0.75rem 1.2rem;
   border-radius: 10px;
   font-size: 1rem;
-  margin-left: 92%;
-  margin-bottom: 42%;
+  position: relative;
+  left: 90%;
+  bottom: 42%;
 }
 </style>
