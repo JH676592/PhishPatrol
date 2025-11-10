@@ -10,16 +10,18 @@ import { get } from 'svelte/store';
 let showMessages = false;
 let currentScenario: Scenario | null = null;
 
+// Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
 function openMessages() {
-  const queue = get(scenarioQueue);
-  const nextSMS = queue.find(s => s.type === ScenarioType.SMS);
+  const queue = get(scenarioQueue); //queue
+  const nextSMS = queue.find(s => s.type === ScenarioType.SMS); //first sms in queue
   if (nextSMS) {
-    currentScenario = nextSMS;
-    showMessages = true;
-    removeScenarioFromQueue(nextSMS.id);
+    currentScenario = nextSMS; //set as current
+    showMessages = true; //show MessageWindow
+    removeScenarioFromQueue(nextSMS.id); //remove from queue
   }
 }
 
+// Same as for SMS but Email
 function openEmail() {
   const queue = get(scenarioQueue);
   const nextEmail = queue.find(s => s.type === ScenarioType.EMAIL);
@@ -30,9 +32,10 @@ function openEmail() {
   }
 }
 
+// handles closing window when user selects continue button
 function handleComplete() {
-    showMessages = false;
-    currentScenario = null;
+    showMessages = false; //hide MessageWindow
+    currentScenario = null; //clear current scenario
 }
 
 </script>

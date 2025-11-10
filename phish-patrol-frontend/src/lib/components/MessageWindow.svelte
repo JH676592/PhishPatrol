@@ -1,13 +1,15 @@
 <script lang="ts">
   import type { Scenario } from '$lib/types';
 
-  export let currentScenario: Scenario;
-  export let onComplete: () => void;
+  export let currentScenario: Scenario; // current sms or email scenario
+  export let onComplete: () => void; 
 
-  let isAnswered = false;
-  let userChoice: boolean | null = null;
-  let feedbackMessage = '';
+  let isAnswered = false; // tracks user answer
+  let userChoice: boolean | null = null; // stores user answer
+  let feedbackMessage = ''; // stores feedback msg 
 
+
+  // Formatting for the emails and sms messages, work in progress
   function formatMessage(content: string): string {
     let formatted = content
         .replace(/(Subject:)/i, '<strong>Subject:</strong> ')
@@ -17,28 +19,30 @@
         .replace(/(Dear\s+\w+,?)/i, '<br><br>$1<br><br>')
         .replace(/((?:https?|hxxps?):\/\/[^\s]+)/gi, '<span class="fake-link">$1</span>')
         .replace(/(Thank you,|Best,|Sincerely,)/gi, '<br><br>$1')
-        .replace(/([.!?])([A-Z])/g, '$1<br><br>$2'); // Add paragraph spacing between sentences
+        .replace(/([.!?])([A-Z])/g, '$1<br><br>$2');
 
     return formatted;
   }
 
+  // Take answer from player and returns feedback msg
   function handleAnswer(choice: boolean) {
     userChoice = choice;
     isAnswered = true;
 
     const isCorrect = choice === currentScenario.isScam;
 
+    // Feedback message returned depending on user answer
     feedbackMessage = isCorrect
     ? `<strong>Correct!</strong><br>${currentScenario.explanation}`
     : `<strong>Incorrect!</strong><br>This ${currentScenario.type === 'SMS' ? 'message' : 'email'} is ${currentScenario.isScam ? 'a phishing attempt' : 'legitimate'}.<br>${currentScenario.explanation}`;
   }
 
+  // Handles user clicking continue
   function handleContinue() {
-    //reset local state
     isAnswered = false;
     userChoice = null;
     feedbackMessage = '';
-    onComplete(); //window is done
+    onComplete(); // notify parent window is done so window will close
   }
 
 </script>
@@ -128,11 +132,12 @@
   font-weight: 500;
 }
 
+/* link styling */
 :global(.message-content .fake-link) {
     color: #0066cc;
     text-decoration: underline;
-    cursor: default; /* shows default cursor, not pointer */
-    pointer-events: none; /* disables clicking */
+    cursor: default;
+    pointer-events: none;
     display: inline-block;
     margin: 4px 0;
 }
@@ -141,6 +146,7 @@
     color: #003366;
 }
 
+/* feedback */
 .feedback {
   font-size: 1.1rem;
   text-align: left;
@@ -150,10 +156,9 @@
   font-weight: 500;
   line-height: 28px;
   color: #1b1010;
-
 }
 
-/* Buttons container */
+/* buttons container */
 .button-group {
   display: flex;
   justify-content: center;
@@ -161,7 +166,6 @@
   margin-bottom: 20px;
 }
 
-/* Individual buttons */
 .btn {
   padding: 10px 24px;
   border: none;
@@ -183,18 +187,21 @@
   box-shadow: 0 3px 6px rgba(0,0,0,0.15), inset 0 -2px 0 rgba(255,255,255,0.2);
 }
 
+/* scam button */
 .btn-scam {
   background-color: #dc3545;
   color: white;
   letter-spacing: .8px;
 }
 
+/* legit button */
 .btn-legit {
   background-color: #28a745;
   color: white;
   letter-spacing: .8px;
 }
 
+/* continue button */
 .btn-next {
   background-color: #0a0a0a;
   color: white;
@@ -203,14 +210,12 @@
   background-color: purple;
 }
 
-/* Continue button container for spacing */
 .continue-container {
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
-/* Fade-in animation */
 @keyframes fadeIn {
   from { opacity: 0; transform: translate(-50%, -48%) scale(0.95); }
   to { opacity: 1; transform: translate(-50%, -50%) scale(1); }

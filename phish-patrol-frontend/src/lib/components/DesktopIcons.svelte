@@ -1,30 +1,27 @@
 <script lang="ts">
   import { scenarioQueue } from '$lib/stores/scenarioQueue';
   import { ScenarioType } from '$lib/types';
-  import { get } from 'svelte/store';
+
 
   export let on: { openMessages: () => void; openEmail: () => void};
   
+  // Variables to keep track of email and sms count for queue
   let emailCount = 0;
   let smsCount = 0;
   
+  // when scenarioQueue store changes it updates emailCount, same for smsCount
   $: emailCount = $scenarioQueue.filter(s => s.type === ScenarioType.EMAIL).length;
   $: smsCount = $scenarioQueue.filter(s => s.type === ScenarioType.SMS).length;
   
-
-  /*$: {
-    const queue = get(scenarioQueue);
-    emailCount = queue.filter(s => s.type === ScenarioType.EMAIL).length;
-    smsCount = queue.filter(s => s.type === ScenarioType.SMS).length;
-  }*/
-
+  // Called when email icon clicked and opens msg window
   function handleClickMessages() {
-    console.log("Messages icon clicked");
+    console.log("Messages icon clicked"); //for debugging
     on?.openMessages?.();
   }
 
+  // Called when sms icon clicked and opens msg window
   function handleClickEmail() {
-    console.log("SMS icon clicked");
+    console.log("SMS icon clicked"); // debugging
     on?.openEmail?.();
   }
  
@@ -47,16 +44,6 @@
     <div class="icon-label">Messages</div>
   </button>
 </div>
-
-<!---
-  <a href="/messages" class="icon">
-    {#if smsCount > 0}
-      <div class="badge">{smsCount}</div>
-    {/if}
-    <img src="/icons/chat.png" alt="SMS" class="icon-img"/>
-    <div class="icon-label">Messages</div>
-  </a>
-</div>--->
 
 <style>
   
@@ -83,6 +70,7 @@
       height: 64px;
       margin-bottom: 8px;
   }
+
   .badge {
       position: absolute;
       top: -5px;
