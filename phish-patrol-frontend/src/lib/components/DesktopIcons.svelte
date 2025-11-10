@@ -1,20 +1,54 @@
 <script lang="ts">
   import { scenarioQueue } from '$lib/stores/scenarioQueue';
   import { ScenarioType } from '$lib/types';
+  import { get } from 'svelte/store';
 
+  export let on: { openMessages: () => void; openEmail: () => void};
+  
+  let emailCount = 0;
+  let smsCount = 0;
+  
   $: emailCount = $scenarioQueue.filter(s => s.type === ScenarioType.EMAIL).length;
   $: smsCount = $scenarioQueue.filter(s => s.type === ScenarioType.SMS).length;
+  
+
+  /*$: {
+    const queue = get(scenarioQueue);
+    emailCount = queue.filter(s => s.type === ScenarioType.EMAIL).length;
+    smsCount = queue.filter(s => s.type === ScenarioType.SMS).length;
+  }*/
+
+  function handleClickMessages() {
+    console.log("Messages icon clicked");
+    on?.openMessages?.();
+  }
+
+  function handleClickEmail() {
+    console.log("SMS icon clicked");
+    on?.openEmail?.();
+  }
+ 
 </script>
 
 <div class="icons">
-  <a href="/email" class="icon">
+  <button class="icon" type="button" on:click={handleClickEmail}>
     {#if emailCount > 0}
       <div class="badge">{emailCount}</div>
     {/if}
     <img src="/icons/gmail.png" alt="Email" class="icon-img"/>
     <div class="icon-label">Email</div>
-  </a>
+  </button>
+  
+  <button class="icon" type="button" on:click={handleClickMessages}>
+    {#if smsCount > 0}
+      <div class="badge">{smsCount}</div>
+    {/if}
+    <img src="/icons/chat.png" alt="SMS" class="icon-img"/>
+    <div class="icon-label">Messages</div>
+  </button>
+</div>
 
+<!---
   <a href="/messages" class="icon">
     {#if smsCount > 0}
       <div class="badge">{smsCount}</div>
@@ -22,7 +56,7 @@
     <img src="/icons/chat.png" alt="SMS" class="icon-img"/>
     <div class="icon-label">Messages</div>
   </a>
-</div>
+</div>--->
 
 <style>
   

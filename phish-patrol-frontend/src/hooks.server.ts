@@ -40,7 +40,7 @@ async function generateAndStoreScenario() {
     });
 
     const responseText = response.text;
-    const scenario = JSON.parse(responseText) as Omit<Scenario, 'id'>;
+    const scenario = JSON.parse(response.text!) as Omit<Scenario, 'id'>;
     addScenario(scenario);
   } catch (error) {
     if (error instanceof ApiError) {

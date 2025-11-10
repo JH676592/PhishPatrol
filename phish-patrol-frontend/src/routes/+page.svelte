@@ -1,10 +1,43 @@
 <script lang="ts">
 
 import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+import MessageWindow from '$lib/components/MessageWindow.svelte'; 
+import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
+import type { Scenario } from '$lib/types';
+import { ScenarioType } from '$lib/types';
+import { get } from 'svelte/store';
+
+let showMessages = false;
+let currentScenario: Scenario | null = null;
+
+function openMessages() {
+  const queue = get(scenarioQueue);
+  const nextSMS = queue.find(s => s.type === ScenarioType.SMS);
+  if (nextSMS) {
+    currentScenario = nextSMS;
+    showMessages = true;
+    removeScenarioFromQueue(nextSMS.id);
+  }
+}
+
+function openEmail() {
+  const queue = get(scenarioQueue);
+  const nextEmail = queue.find(s => s.type === ScenarioType.EMAIL);
+  if (nextEmail) {
+    currentScenario = nextEmail;
+    showMessages = true;
+    removeScenarioFromQueue(nextEmail.id);
+  }
+}
+
+function handleComplete() {
+    showMessages = false;
+    currentScenario = null;
+}
+
 </script>
 
-
-<!-----------------------------DESKTOP + TASKBAR PAGE----------------------------------------->
+<!-----------------------------DESKTOP/HOME PAGE----------------------------------------->
 
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -19,8 +52,17 @@ import DesktopIcons from '$lib/components/DesktopIcons.svelte';
     </div>
   </header>
 
-  <DesktopIcons />
+  <!---------Desktop Icons------------>
+  <DesktopIcons on={{ openMessages: openMessages, openEmail: openEmail }}/>
 
+
+  <!---------Message Window------------>
+  {#if showMessages && currentScenario}
+      <MessageWindow {currentScenario} onComplete={handleComplete} />
+  {/if}
+
+
+  <!-----------------------------Taskbar---------------------------------->
   <div class="taskbar">
 
     <!-----------Left Items------------>
