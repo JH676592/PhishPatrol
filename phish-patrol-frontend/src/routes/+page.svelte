@@ -2,6 +2,7 @@
   import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
   import DesktopIcons from '$lib/components/DesktopIcons.svelte';
   
+  
   let showLogin = true; 
   
   
@@ -69,11 +70,10 @@
       </div>
     </div>
   </div>
+  <LoginModal />
 </div>
 <!--Login Modal on site launch-->
-{#if showLogin}
-  <LoginModal />
-{/if}
+
       
 
 <!-----------------------------------STYLES------------------------------------->

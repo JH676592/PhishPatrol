@@ -1,5 +1,6 @@
 <script>
   import { writable } from 'svelte/store';
+  import { onMount } from 'svelte';
 
   let username = '';
   let password = '';
@@ -27,6 +28,16 @@
     loginTitle = "Login"
     visibleStore.set(true);
   }
+
+  // modal bug fix maybe
+  onMount(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      tokenStore.set(token);
+      visibleStore.set(false); // hide modal if token exists
+    }
+  });
+
 
   async function login() {
     const res = await fetch('http://localhost:8080/auth/login', {
