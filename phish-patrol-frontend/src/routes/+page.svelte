@@ -1,6 +1,11 @@
 <script lang="ts">
+  import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
+  import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+  
+  let showLogin = true; 
+  
+  
 
-import DesktopIcons from '$lib/components/DesktopIcons.svelte';
 </script>
 
 
@@ -65,6 +70,10 @@ import DesktopIcons from '$lib/components/DesktopIcons.svelte';
     </div>
   </div>
 </div>
+<!--Login Modal on site launch-->
+{#if showLogin}
+  <LoginModal />
+{/if}
       
 
 <!-----------------------------------STYLES------------------------------------->
