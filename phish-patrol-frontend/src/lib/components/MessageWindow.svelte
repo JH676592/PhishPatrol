@@ -142,10 +142,6 @@
     margin: 4px 0;
 }
 
-.message-content strong {
-    color: #003366;
-}
-
 /* feedback */
 .feedback {
   font-size: 1.1rem;

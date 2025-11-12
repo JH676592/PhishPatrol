@@ -64,7 +64,11 @@
       text-align: center;
       text-decoration: none;
       color: black;
+      background-color: transparent;
+      border: none;
+      cursor: pointer
   }
+
   .icon-img {
       width: 64px;
       height: 64px;
