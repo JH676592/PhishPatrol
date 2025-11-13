@@ -1,4 +1,11 @@
 <script lang="ts">
+  import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
+  import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+  
+  
+  let showLogin = true; 
+  
+  
 
 import DesktopIcons from '$lib/components/DesktopIcons.svelte';
 import MessageWindow from '$lib/components/MessageWindow.svelte'; 
@@ -109,7 +116,10 @@ function handleComplete() {
       </div>
     </div>
   </div>
+  <LoginModal />
 </div>
+<!--Login Modal on site launch-->
+
       
 
 <!-----------------------------------STYLES------------------------------------->
