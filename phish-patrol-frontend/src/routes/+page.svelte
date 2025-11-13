@@ -1,9 +1,13 @@
 <script lang="ts">
-  import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
+  import LoginModal from '$lib/components/LoginModal.svelte'; 
   import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+  import { tokenStore, visibleStore } from '$lib/stores/auth';
+
   
-  
-  let showLogin = true; 
+  function logout() {
+    localStorage.removeItem('token');
+    tokenStore.set('');
+  }
   
   
 
@@ -56,6 +60,11 @@
 
     <!-----------Right Items------------->
     <div class="taskbar-right">
+      <div>
+        {#if $tokenStore}
+        <button class="logout-btn" on:click={logout}>Logout</button>
+        {/if}
+      </div>
       <div class="wifi">
         <img src="/icons/wifi.png" alt="Wifi" class="right-icons">
         <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
@@ -217,6 +226,23 @@
     width: 100%;
     max-width: 250%;
     box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
+  }
+
+  /* Logout Button */
+  .logout-btn {
+    background-color: #ef4444;
+    color: white;
+    font-family: 'Roboto Mono', monospace;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 12px;
+  }
+
+  .logout-btn:hover {
+    background-color: #dc2626;
   }
 
   /* Taskbar Right */

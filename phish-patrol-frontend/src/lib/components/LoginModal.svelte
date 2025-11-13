@@ -1,14 +1,12 @@
 <script>
   import { writable } from 'svelte/store';
   import { onMount } from 'svelte';
+  import { tokenStore, visibleStore } from '$lib/stores/auth';
 
   let username = '';
   let password = '';
   let email = '';
-  export const visibleStore = writable(true); // control modal visibility
   let errorRegisterText = '';
-
-  export const tokenStore = writable('');
 
   // chaniging modal to Register vars
   let loginTitle = "Login"
@@ -263,24 +261,28 @@
 
   .login-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 5%;
+    left: 90%;
     display: flex;
     align-items: center;
-    z-index: 2000;
 }
 
-.login {
-  font-family: 'Roboto Mono', monospace;
-  background-color: #5734f0;
-  color: white;
-  padding: 0.75rem 1.2rem;
-  border-radius: 10px;
-  font-size: 1rem;
-  position: relative;
-  left: 90%;
-  bottom: 42%;
-}
+
+  .login {
+    background-color: #3d13f7;
+    color: white;
+    font-family: 'Roboto Mono', monospace;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 12px;
+    left: 90%;
+    bottom: 42%;
+  }
+
+  .login:hover{
+    background-color: #310fc8;
+  }
 </style>
