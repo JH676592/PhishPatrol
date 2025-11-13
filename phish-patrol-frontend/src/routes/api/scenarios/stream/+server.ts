@@ -20,7 +20,11 @@ export const GET: RequestHandler = ({ request }) => {
 
       request.signal.onabort = () => {
         clearInterval(interval);
-        controller.close();
+        try{
+          controller.close();
+        } catch (err){
+          console.warn("Stream already closed: ", err)  //fix for contoller being closed already
+        }
       };
     },
   });
