@@ -7,10 +7,47 @@
   
   
 
+import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+import MessageWindow from '$lib/components/MessageWindow.svelte'; 
+import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
+import type { Scenario } from '$lib/types';
+import { ScenarioType } from '$lib/types';
+import { get } from 'svelte/store';
+
+let showMessages = false;
+let currentScenario: Scenario | null = null;
+
+// Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
+function openMessages() {
+  const queue = get(scenarioQueue); //queue
+  const nextSMS = queue.find(s => s.type === ScenarioType.SMS); //first sms in queue
+  if (nextSMS) {
+    currentScenario = nextSMS; //set as current
+    showMessages = true; //show MessageWindow
+    removeScenarioFromQueue(nextSMS.id); //remove from queue
+  }
+}
+
+// Same as for SMS but Email
+function openEmail() {
+  const queue = get(scenarioQueue);
+  const nextEmail = queue.find(s => s.type === ScenarioType.EMAIL);
+  if (nextEmail) {
+    currentScenario = nextEmail;
+    showMessages = true;
+    removeScenarioFromQueue(nextEmail.id);
+  }
+}
+
+// handles closing window when user selects continue button
+function handleComplete() {
+    showMessages = false; //hide MessageWindow
+    currentScenario = null; //clear current scenario
+}
+
 </script>
 
-
-<!-----------------------------DESKTOP + TASKBAR PAGE----------------------------------------->
+<!-----------------------------DESKTOP/HOME PAGE----------------------------------------->
 
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -25,8 +62,17 @@
     </div>
   </header>
 
-  <DesktopIcons />
+  <!---------Desktop Icons------------>
+  <DesktopIcons on={{ openMessages: openMessages, openEmail: openEmail }}/>
 
+
+  <!---------Message Window------------>
+  {#if showMessages && currentScenario}
+      <MessageWindow {currentScenario} onComplete={handleComplete} />
+  {/if}
+
+
+  <!-----------------------------Taskbar---------------------------------->
   <div class="taskbar">
 
     <!-----------Left Items------------>
