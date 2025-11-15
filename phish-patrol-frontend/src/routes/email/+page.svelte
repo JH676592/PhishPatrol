@@ -3,6 +3,7 @@
   import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
   import { ScenarioType } from '$lib/types';
   import type { Scenario } from '$lib/types';
+  import { healthbar } from '$lib/stores/stores';
 
   let isAnswered: boolean = false;
   let userChoice: boolean | null = null;
@@ -26,7 +27,20 @@
 
     userChoice = choice;
     isAnswered = true;
-    feedbackMessage = getFeedbackMessage(userChoice, currentScenario);
+    lifeHealthChange(userChoice, currentScenario);
+    feedbackMessage = getFeedbackMessage(userChoice, currentScenario); 
+
+	//Implement difficulty progression here
+
+  }
+
+  function lifeHealthChange(userChoice: boolean, scenario: Scenario): void{
+     const isCorrect = userChoice === scenario.isScam;
+     if (!isCorrect){
+      healthbar.update(n=>n-10);
+
+     }
+
   }
 
   // Take userChoice and scenario data and sends back a message for correct/incorrect
