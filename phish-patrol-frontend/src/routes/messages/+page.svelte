@@ -4,12 +4,12 @@
   import { ScenarioType } from '$lib/types';
   import type { Scenario } from '$lib/types';
   import { healthbar } from '$lib/stores/stores';
-
+  
   let isAnswered: boolean = false;
   let userChoice: boolean | null = null;
   let feedbackMessage: string = "";
 
-  $: currentScenario = $scenarioQueue.find(s => s.type === ScenarioType.EMAIL);
+  $: currentScenario = $scenarioQueue.find(s => s.type === ScenarioType.SMS);
 
   $: {
     if (!isAnswered) {
@@ -19,11 +19,13 @@
     }
   }
 
+
   /**
    * Handles the user's answer submission.
    */
   function handleAnswer(choice: boolean): void {
     if (!currentScenario) return;
+
 
     userChoice = choice;
     isAnswered = true;
@@ -47,7 +49,7 @@
   function getFeedbackMessage(userChoice: boolean, scenario: Scenario): string
   {
     let msgType = "email";
-    if (scenario.type !== ScenarioType.EMAIL) {
+    if (scenario.type !== ScenarioType.SMS) {
       msgType = "message";
     }
 
@@ -69,7 +71,7 @@
 
   /**
    * Removes the answered scenario from the queue and resets the state.
-   * The page will reactively show the next email or redirect.
+   * The page will reactively show the next message or redirect to /.
    */
   function proceedToNext(): void {
     if (!currentScenario) return;
@@ -131,8 +133,6 @@
     text-align: center;
     background-color: #adadad3a;
     border-radius: 8px;
-    max-height: 80vh;
-    overflow-y: auto;
   }
 
   header h1 {

@@ -1,11 +1,51 @@
 <script lang="ts">
   import{healthbar} from '$lib/stores/stores'
 
+import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
+import{healthbar} from '$lib/stores/stores'
+import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+import MessageWindow from '$lib/components/MessageWindow.svelte'; 
+import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
+import type { Scenario } from '$lib/types';
+import { ScenarioType } from '$lib/types';
+import { get } from 'svelte/store';
+
+let showMessages = false;
+let currentScenario: Scenario | null = null;
+let showLogin = true; 
+  
+
+// Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
+function openMessages() {
+  const queue = get(scenarioQueue); //queue
+  const nextSMS = queue.find(s => s.type === ScenarioType.SMS); //first sms in queue
+  if (nextSMS) {
+    currentScenario = nextSMS; //set as current
+    showMessages = true; //show MessageWindow
+    removeScenarioFromQueue(nextSMS.id); //remove from queue
+  }
+}
+
+// Same as for SMS but Email
+function openEmail() {
+  const queue = get(scenarioQueue);
+  const nextEmail = queue.find(s => s.type === ScenarioType.EMAIL);
+  if (nextEmail) {
+    currentScenario = nextEmail;
+    showMessages = true;
+    removeScenarioFromQueue(nextEmail.id);
+  }
+}
+
+// handles closing window when user selects continue button
+function handleComplete() {
+    showMessages = false; //hide MessageWindow
+    currentScenario = null; //clear current scenario
+}
 
 </script>
 
-
-<!-----------------------------DESKTOP + TASKBAR PAGE----------------------------------------->
+<!-----------------------------DESKTOP/HOME PAGE----------------------------------------->
 
 <head>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
@@ -20,21 +60,17 @@
     </div>
   </header>
 
-  <div class="icons">
-    <div class="icon">
-        <img src="/icons/gmail.png" alt="Email" class="icon-img"/>
-        <!-----<<a href="https://www.flaticon.com/free-icons/gmail" title="gmail icons">Gmail icons created by Pixel perfect - Flaticon</a>-->
-        <div class="icon-label">Email</div>
-    </div>
-
-    <div class="icon">
-        <img src="/icons/chat.png" alt="SMS" class="icon-img"/>
-        <!----<a href="https://www.flaticon.com/free-icons/message" title="message icons">Message icons created by Freepik - Flaticon</a>-->
-        <div class="icon-label">Messages</div>
-    </div>
-  </div>
+  <!---------Desktop Icons------------>
+  <DesktopIcons on={{ openMessages: openMessages, openEmail: openEmail }}/>
 
 
+  <!---------Message Window------------>
+  {#if showMessages && currentScenario}
+      <MessageWindow {currentScenario} onComplete={handleComplete} />
+  {/if}
+
+
+  <!-----------------------------Taskbar---------------------------------->
   <div class="taskbar">
 
     <!-----------Left Items------------>
@@ -79,7 +115,10 @@
       </div>
     </div>
   </div>
+  <LoginModal />
 </div>
+<!--Login Modal on site launch-->
+
       
 
 <!-----------------------------------STYLES------------------------------------->
@@ -133,46 +172,6 @@
     text-align: center;
 
   }
-
-  /* Icons */
-  .icons {
-    position: absolute;
-    top: 80px;
-    left: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .icon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 4px;
-    width: 100px;
-    cursor: pointer;
-    user-select: none;
-  }
-
-  .icon-img {
-    width: 65px;
-    height: 65px;
-    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.6));
-  }
-
-  .icon-label {
-    font-size: 14px;
-    font-weight: 800;
-    text-align: center;  
-    letter-spacing: 1px;
-    text-shadow:   
-    -1px -1px 0 #2a2699d1,
-     1px -1px 0 #2a2699d1,
-    -1px  1px 0 #2a2699d1,
-     1px  1px 0 #2a2699d1;
-  }
-
 
   /* Taskbar */
 
@@ -295,7 +294,6 @@
      0px 0px 0 rgba(255, 255, 255, 0.653),
     0px  0px 0 rgba(255, 255, 255, 0.653),
      0px  0px 0 rgba(255, 255, 255, 0.653)
-    
   }
 
   #battery {
@@ -325,13 +323,6 @@
       position: absolute;
       top: 2px;
       left: 1px;
-      
-
     }
-
   }
-
-
-
-  
 </style>
