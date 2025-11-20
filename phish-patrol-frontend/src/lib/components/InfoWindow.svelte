@@ -22,7 +22,7 @@
         <h3>Common Threat Types</h3>
         
         <div class="threat-entry">
-          <h4>🎣 Phishing (General)</h4>
+          <h4>Phishing (General)</h4>
           <p>
             The practice of sending fraudulent communications that appear to come from a reputable source. 
             <strong>Goal:</strong> To steal sensitive data like credit card numbers and login information.
@@ -30,7 +30,7 @@
         </div>
 
         <div class="threat-entry">
-          <h4>📱 Smishing (SMS Phishing)</h4>
+          <h4>Smishing (SMS Phishing)</h4>
           <p>
             Phishing attacks delivered via text message (SMS). These often contain short, urgent messages with malicious links, 
             asking you to "verify" an account or claim a prize.
@@ -38,15 +38,55 @@
         </div>
 
         <div class="threat-entry">
-          <h4>🎯 Spear Phishing</h4>
+          <h4>Spear Phishing</h4>
           <p>
             A highly targeted attack personalized for a specific individual or organization. Attackers often research 
             the victim beforehand to make the message seem trustworthy.
           </p>
         </div>
 
+	<div class="threat-entry">
+          <h4>Whaling (CEO Fraud)</h4>
+          <p>
+            A specific type of spear phishing that targets high-profile executives or impersonates them. 
+            <strong>Goal:</strong> To trick employees into authorizing large wire transfers or revealing tax information under the guise of an "urgent request" from the boss.
+          </p>
+        </div>
+
         <div class="threat-entry">
-          <h4>🚩 Key Red Flags</h4>
+          <h4>Pretexting</h4>
+          <p>
+            The attacker creates a fabricated scenario (the pretext) to steal information. Common examples include impersonating 
+            IT support needing your password to "fix a glitch" or HR verifying details for a "payroll update."
+          </p>
+        </div>
+
+        <div class="threat-entry">
+          <h4>Clone Phishing</h4>
+          <p>
+            Hackers take a legitimate email you previously received, clone its content completely, but replace the original link 
+            or attachment with a malicious one. It often comes with a message like "Resending updated version."
+          </p>
+        </div>
+
+        <div class="threat-entry">
+          <h4>Quid Pro Quo</h4>
+          <p>
+            "Something for something." The attacker promises a benefit in exchange for information. For example, a scammer might 
+            call claiming to be technical support offering to "speed up" your computer if you disable your antivirus.
+          </p>
+        </div>
+
+        <div class="threat-entry">
+          <h4>Angler Phishing</h4>
+          <p>
+            Attacks targeted at social media users. Scammers create fake customer support accounts and intercept complaints 
+            users post on public feeds, offering to "resolve" the issue via a malicious DM link.
+          </p>
+        </div>
+
+        <div class="threat-entry">
+          <h4>Key Red Flags</h4>
           <ul>
             <li><strong>Urgency:</strong> "Act now or your account will be deleted!"</li>
             <li><strong>Generic Greetings:</strong> "Dear Customer" instead of your name.</li>
