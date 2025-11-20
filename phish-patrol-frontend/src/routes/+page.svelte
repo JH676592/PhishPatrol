@@ -1,10 +1,9 @@
 <script lang="ts">
-  import{healthbar} from '$lib/stores/stores'
-
 import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
 import{healthbar} from '$lib/stores/stores'
 import DesktopIcons from '$lib/components/DesktopIcons.svelte';
-import MessageWindow from '$lib/components/MessageWindow.svelte'; 
+import MessageWindow from '$lib/components/MessageWindow.svelte';
+import InfoWindow from '$lib/components/InfoWindow.svelte';
 import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
 import type { Scenario } from '$lib/types';
 import { ScenarioType } from '$lib/types';
@@ -12,7 +11,8 @@ import { get } from 'svelte/store';
 
 let showMessages = false;
 let currentScenario: Scenario | null = null;
-let showLogin = true; 
+let showLogin = true;
+let showTutorial = false;
   
 
 // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
@@ -43,6 +43,10 @@ function handleComplete() {
     currentScenario = null; //clear current scenario
 }
 
+function toggleTutorial() {
+    showTutorial = !showTutorial;
+}  
+
 </script>
 
 <!-----------------------------DESKTOP/HOME PAGE----------------------------------------->
@@ -69,6 +73,10 @@ function handleComplete() {
       <MessageWindow {currentScenario} onComplete={handleComplete} />
   {/if}
 
+  {#if showTutorial}
+      <InfoWindow onClose={toggleTutorial} />
+  {/if}
+
 
   <!-----------------------------Taskbar---------------------------------->
   <div class="taskbar">
@@ -84,7 +92,7 @@ function handleComplete() {
         <img src="/icons/book.png" alt="Resources" class="left-icons"/>
         <div class="left-label">Resources</div>
       </div>
-      <div class="left-item">
+      <div class="left-item" on:click={toggleTutorial}>
           <img src="/icons/tutorial.png" alt="Tutorial" class="left-icons"/>
         <!-----<a href="https://www.flaticon.com/free-icons/video-tutorial" title="video tutorial icons">Video tutorial icons created by Freepik - Flaticon</a>-->
         <div class="left-label">Tutorial</div>
