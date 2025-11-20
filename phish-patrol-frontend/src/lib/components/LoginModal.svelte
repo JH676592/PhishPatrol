@@ -7,6 +7,7 @@
   let password = '';
   let email = '';
   let errorRegisterText = '';
+  let experience = 'Beginner'; //automatically beginner
 
   // chaniging modal to Register vars
   let loginTitle = "Login"
@@ -79,7 +80,7 @@
     const res = await fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password, experience })
     });
 
     if (res.ok) {
@@ -108,6 +109,18 @@
     <input bind:value={password} type="password" placeholder="Password" />
     {#if !$loginVisibleStore}
     <input bind:value={email} type="email" placeholder="Email (Optional)" />
+    <div class="exp-container">
+      <p class="exp-title">Please select your experience:</p>
+      <button class="beginner-btn" class:selected={experience === 'Beginner'} on:click={() => experience = 'Beginner'}>
+        Beginner
+      </button>
+      <button class="intermediate-btn" class:selected={experience === 'Intermediate'} on:click={() => experience = 'Intermediate'}
+        >Intermediate
+      </button>
+      <button class="advanced-btn" class:selected={experience === 'Advanced'} on:click={() => experience = 'Advanced'}>
+        Advanced
+      </button>
+    </div>
     {/if}
 
     {#if $loginVisibleStore}
@@ -215,12 +228,21 @@
   button {
     cursor: pointer;
     border: none;
+    font-family: 'Roboto Mono', monospace;
     border-radius: 10px;
-    padding: 0.75rem;
+    padding: 0.6rem;
     font-size: 1rem;
     font-weight: 500;
-    transition: all 0.2s ease;
   }
+
+  button:hover{
+    background-color:#c5c9d6;
+  }
+
+  button.selected {
+  border: 2px solid #2563eb;
+}
+
 
   .login-btn {
     background-color: #3b82f6;
@@ -284,5 +306,22 @@
 
   .login:hover{
     background-color: #310fc8;
+  }
+
+  .exp-title{
+    color: #374151;
+    font-size: 0.8rem;
+  }
+
+  .beginner-btn{
+    font-size: 0.7rem;
+  }
+
+  .intermediate-btn{
+    font-size: 0.7rem;
+  }
+
+  .advanced-btn{
+    font-size: 0.7rem;
   }
 </style>
