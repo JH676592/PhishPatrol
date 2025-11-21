@@ -10,7 +10,6 @@
   let feedbackMessage = ''; // stores feedback msg 
 
   let feedbackRef: HTMLDivElement | null = null; 
-
   let index = 0;
   let typedExplanation = "";
   let showCursor = true;
@@ -234,14 +233,12 @@
 .feedback-text.correct {
   color: #28a745;
   text-shadow: 0 0 5px #00ff22;
-  /*text-shadow: 1px 1px 2px #1a4607c8;*/
   letter-spacing: 0.2rem;
 }
 
 
 .feedback-text.incorrect {
   color: #c31212;
-  /*text-shadow: 1px 1px 2px #460707c8;*/
   text-shadow: 0 0 5px rgb(255, 0, 0);
   letter-spacing: 0.3rem;
 }

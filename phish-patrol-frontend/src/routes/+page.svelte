@@ -1,8 +1,6 @@
 <script lang="ts">
   import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
   import DesktopIcons from '$lib/components/DesktopIcons.svelte';
-
-  //import DesktopIcons from '$lib/components/DesktopIcons.svelte';
   import MessageWindow from '$lib/components/MessageWindow.svelte'; 
   import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
   import type { Scenario } from '$lib/types';
@@ -177,7 +175,6 @@
     }
 
     /* Taskbar */
-
     .taskbar {
       display: flex;
       flex-wrap: nowrap;
@@ -209,7 +206,6 @@
     }
     
     /* Taskbar Left */
-
     .taskbar-left {
       display: flex;
       gap: 40px;
@@ -248,7 +244,6 @@
 
 
     /* Search Bar */
-
     .search-container {
       display: flex;
       flex: 1;
@@ -268,7 +263,6 @@
     }
 
     /* Taskbar Right */
-    
     .taskbar-right {
       display: flex;
       align-items: center;

@@ -29,9 +29,6 @@
     on?.openEmail?.();
   }
 
- //Change logo//////////////////////
- //Change fonts, and colors for the incorrect/scam
-
 
 </script>
 
