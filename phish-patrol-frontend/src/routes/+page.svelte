@@ -11,7 +11,7 @@
   
   
 
-import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+
 import MessageWindow from '$lib/components/MessageWindow.svelte'; 
 import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
 import type { Scenario } from '$lib/types';
