@@ -1,22 +1,19 @@
 <script lang="ts">
   import LoginModal from '$lib/components/LoginModal.svelte'; 
   import DesktopIcons from '$lib/components/DesktopIcons.svelte';
-  import { tokenStore, visibleStore } from '$lib/stores/auth';
+  import { tokenStore } from '$lib/stores/auth';
+  import MessageWindow from '$lib/components/MessageWindow.svelte'; 
+  import { scenarioQueue, removeScenarioFromQueue, clearScenarioQueue } from '$lib/stores/scenarioQueue';
+  import type { Scenario } from '$lib/types';
+  import { ScenarioType } from '$lib/types';
+  import { get } from 'svelte/store';
 
   
   function logout() {
     localStorage.removeItem('token');
     tokenStore.set('');
+    clearScenarioQueue();
   }
-  
-  
-
-
-import MessageWindow from '$lib/components/MessageWindow.svelte'; 
-import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
-import type { Scenario } from '$lib/types';
-import { ScenarioType } from '$lib/types';
-import { get } from 'svelte/store';
 
 let showMessages = false;
 let currentScenario: Scenario | null = null;
