@@ -16,18 +16,18 @@ public class User {
     @Column(nullable = false) // stores the hashed passwords, required
     private String passwordHash;
     
-    @Column(unique = true) // only one account with each email
-    private String email;
+    @Column(nullable = false) // changed email to name, required
+    private String name;
 
     @Column(unique = false, nullable = false)   //introduces experience profiles, required
     private String experience;
 
     public User() {}
 
-    public User(String username, String passwordHash, String email, String experience) {
+    public User(String username, String passwordHash, String name, String experience) {
         this.username = username;
         this.passwordHash = passwordHash;
-        this.email = email;
+        this.name = name;
         this.experience = experience;
     }
 
@@ -35,11 +35,11 @@ public class User {
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getPasswordHash() { return passwordHash; }
-    public String getEmail() { return email; }
+    public String getName() { return name; }
     public String getExperience() { return experience; }
 
     public void setUsername(String username) { this.username = username; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
-    public void setEmail(String email) { this.email = email; }
+    public void setName(String name) { this.name = name; }
     public void setExperience(String experience) {this.experience = experience; }
 }

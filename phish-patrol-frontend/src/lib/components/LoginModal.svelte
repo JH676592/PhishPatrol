@@ -5,7 +5,7 @@
 
   let username = '';
   let password = '';
-  let email = '';
+  let name = '';
   let errorRegisterText = '';
   let experience = 'Beginner'; //automatically beginner
 
@@ -69,7 +69,7 @@
       return;
     }
 
-    if (!username.trim() || !password.trim()) {
+    if (!username.trim() || !password.trim() || !name.trim()) {
       errorUserAndPass.set(true);
       return;
     } else if (password.length < 8){
@@ -80,7 +80,7 @@
     const res = await fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password, experience })
+      body: JSON.stringify({ username, password, name, experience }) //realized i never even added the email here in the first place
     });
 
     if (res.ok) {
@@ -108,7 +108,7 @@
     <input bind:value={username} placeholder="Username" />
     <input bind:value={password} type="password" placeholder="Password" />
     {#if !$loginVisibleStore}
-    <input bind:value={email} type="email" placeholder="Email (Optional)" />
+    <input bind:value={name} type="name" placeholder="Name" />
     <div class="exp-container">
       <p class="exp-title">Please select your experience:</p>
       <button class="beginner-btn" class:selected={experience === 'Beginner'} on:click={() => experience = 'Beginner'}>
@@ -136,7 +136,7 @@
 
     <button class="register-btn" on:click={register}>Register</button>
     {#if $errorUserAndPass}
-    <p class="register-error">Username and password are required</p>
+    <p class="register-error">Username, password, and name are required</p>
     {/if}
     {#if $errorPasswordLength}
     <p class="register-error">The password needs to have at least 8 characters</p>
