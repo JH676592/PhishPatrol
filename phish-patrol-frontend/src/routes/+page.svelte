@@ -1,8 +1,9 @@
 <script lang="ts">
-  import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
+  import LoginModal from '$lib/components/LoginModal.svelte'; 
   import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+  import { tokenStore } from '$lib/stores/auth';
   import MessageWindow from '$lib/components/MessageWindow.svelte'; 
-  import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
+  import { scenarioQueue, removeScenarioFromQueue, clearScenarioQueue } from '$lib/stores/scenarioQueue';
   import type { Scenario } from '$lib/types';
   import { ScenarioType } from '$lib/types';
   import { get } from 'svelte/store';
@@ -22,6 +23,11 @@
       showMessages = true; //show MessageWindow
       removeScenarioFromQueue(nextSMS.id); //remove from queue
     }
+  
+  function logout() {
+    localStorage.removeItem('token');
+    tokenStore.set('');
+    clearScenarioQueue();
   }
 
   // Same as for SMS but Email
@@ -113,8 +119,15 @@
         <div class="datetime">
           <div class="clock">11:52 AM</div>
           <div class="date">10/31/2025</div>
-        </div>
+      <div>
+        {#if $tokenStore}
+        <button class="logout-btn" on:click={logout}>Logout</button>
+        {/if}
       </div>
+      <div class="wifi">
+        <img src="/icons/wifi.png" alt="Wifi" class="right-icons">
+        <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
+       </div>
     </div>
     <LoginModal />
   </div>
