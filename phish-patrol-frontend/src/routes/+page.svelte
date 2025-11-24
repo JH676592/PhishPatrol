@@ -17,8 +17,8 @@
 
   let showMessages = false;
   let currentScenario: Scenario | null = null;
-  //let showLogin = true; 
-  //let iconsDisabled = false;
+  let showLogin = true; 
+  let iconsDisabled = false;
 
   // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
   function openMessages() {
