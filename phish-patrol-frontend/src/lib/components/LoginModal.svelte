@@ -19,6 +19,11 @@
   errorRegister = writable(false);
 
   function closeModal() {
+    /*have to set all errors to default*/
+    errorIncorrectLogin.set(false);
+    errorPasswordLength.set(false);
+    errorUserAndPass.set(false);
+    errorRegister.set(false);
     visibleStore.set(false);
     loginVisibleStore.set(true);
   }
