@@ -71,7 +71,6 @@
         <MessageWindow {currentScenario} onComplete={handleComplete}/>
     {/if}
 
-
     <!-----------------------------Taskbar---------------------------------->
     <div class="taskbar">
 
@@ -120,9 +119,8 @@
   </div>
   <!--Login Modal on site launch-->
 
-        
 
-  <!-----------------------------------STYLES------------------------------------->
+  <!----------------------------------STYLES------------------------------------->
   <style>
 
     :global(html,body) {
