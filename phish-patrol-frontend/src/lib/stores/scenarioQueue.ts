@@ -1,10 +1,14 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import type { Scenario } from '$lib/types';
+import { tokenStore } from '$lib/stores/auth';
 
 export const scenarioQueue = writable<Scenario[]>([]);
 
 export function addScenarioToQueue(scenario: Scenario) {
-  scenarioQueue.update(currentQueue => [...currentQueue, scenario]);
+  const token = get(tokenStore);
+  if (token){
+    scenarioQueue.update(currentQueue => [...currentQueue, scenario]);
+  }
 }
 
 export function removeScenarioFromQueue(scenarioId: number) {
@@ -12,3 +16,9 @@ export function removeScenarioFromQueue(scenarioId: number) {
     currentQueue.filter(s => s.id !== scenarioId)
   );
 }
+
+// clearing queue
+export function clearScenarioQueue() {
+  scenarioQueue.set([]);
+}
+
