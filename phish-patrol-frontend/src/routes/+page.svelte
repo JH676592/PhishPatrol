@@ -19,8 +19,8 @@
     clearScenarioQueue();
   }
 
-  let showMessages = false;
   let showLeaderboard = false;
+  let showMessages = false;
   let currentScenario: Scenario | null = null;
 
   // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
@@ -34,14 +34,6 @@
     }
   }
 
-  function openLeaderboard() {
-      showLeaderboard = true;
-  }
-
-  function handleLeaderboardClose() {
-      showLeaderboard = false;
-  }
-
   // Same as for SMS but Email
   function openEmail() {
     const queue = get(scenarioQueue);
@@ -53,42 +45,18 @@
     }
   }
 
+  function openLeaderboard() {
+    showLeaderboard = true;
+  }
+
+  function handleLeaderboardClose() {
+    showLeaderboard = false;
+  }
+
   // handles closing window when user selects continue button
   function handleComplete() {
     showMessages = false; //hide MessageWindow
     currentScenario = null; //clear current scenario
-  }
-
-  interface ScorePayload {
-    username: string;
-    score: number;
-  }
-
-  async function testSaveScore() {
-    const payload: ScorePayload = {
-      username: "test_user_1",
-      score: 500,
-    };
-
-    try {
-      const response = await fetch("http://localhost:8080/auth/save-score", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (response.ok) {
-        const text = await response.text();
-        alert("Success: " + text);
-      } else {
-        alert("Error saving score: " + response.status);
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Connection failed!");
-    }
   }
 </script>
 
@@ -104,9 +72,7 @@
 <div class="desktop">
   <header class="header">
     <div class="header-content">
-      <h1>PHISH PATROL</h1>
-      <img src="/icons/fishing.png" alt="Fish" class="logo" />
-      <!----<a href="https://www.flaticon.com/free-icons/fishing" title="fishing icons">Fishing icons created by Hilmy Abiyyu A. - Flaticon</a>-->
+      <img class="logo" src="background/logoname.png" alt="Phish Patrol logo" />
     </div>
   </header>
 
@@ -117,10 +83,10 @@
   {#if showMessages && currentScenario}
     <MessageWindow {currentScenario} onComplete={handleComplete} />
   {/if}
-
   {#if showLeaderboard}
     <LeaderboardModal onClose={handleLeaderboardClose} />
   {/if}
+
   <!-----------------------------Taskbar---------------------------------->
   <div class="taskbar">
     <!-----------Left Items------------>
@@ -134,10 +100,14 @@
         <img src="/icons/book.png" alt="Resources" class="left-icons" />
         <div class="left-label">Resources</div>
       </div>
-      <div class="left-item"> 
+      <div class="left-item">
         <button class="taskbar-button" on:click={openLeaderboard} type="button">
-          <img src="/icons/leaderboard.png" alt="Leaderboard" class="left-icons" />
-          <div class="left-label">Leaderboard</div> 
+          <img
+            src="/icons/leaderboard.png"
+            alt="Leaderboard"
+            class="left-icons"
+          />
+          <div class="left-label">Leaderboard</div>
         </button>
       </div>
     </div>
@@ -206,27 +176,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-  }
-
-  header h1 {
-    font-family: "Roboto Mono";
-    font-style: normal;
-    font-weight: 700;
-    font-size: 48px;
-    line-height: 140%;
     text-align: center;
-    letter-spacing: 0.15em;
-    color: #000000;
-    mix-blend-mode: hard-light;
-    opacity: 0.8;
+    height: 200px;
   }
 
   .logo {
-    height: 65px;
-    width: 65px;
-    line-height: 140%;
-    text-align: center;
+    width: 420px;
+    height: auto;
   }
 
   /* Taskbar */
@@ -253,19 +209,20 @@
     flex: 1 1 auto;
     min-width: 0;
   }
+
   .taskbar-button {
-      background: transparent;
-      border: none;
-      padding: 0;
-      margin: 0;
-      cursor: pointer;
-      color: inherit; 
-    
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%; 
-      line-height: normal; 
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: inherit;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    line-height: normal;
   }
 
   .taskbar-center {
