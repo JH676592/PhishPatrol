@@ -1,16 +1,24 @@
 <script lang="ts">
-  import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
+  import LoginModal from '$lib/components/LoginModal.svelte'; 
   import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+  import { tokenStore } from '$lib/stores/auth';
   import MessageWindow from '$lib/components/MessageWindow.svelte'; 
-  import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
+  import { scenarioQueue, removeScenarioFromQueue, clearScenarioQueue } from '$lib/stores/scenarioQueue';
   import type { Scenario } from '$lib/types';
   import { ScenarioType } from '$lib/types';
   import { get } from 'svelte/store';
 
+  
+  function logout() {
+    localStorage.removeItem('token');
+    tokenStore.set('');
+    clearScenarioQueue();
+  }
+
   let showMessages = false;
   let currentScenario: Scenario | null = null;
-  let showLogin = true; 
-  let iconsDisabled = false;
+  //let showLogin = true; 
+  //let iconsDisabled = false;
 
   // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
   function openMessages() {
@@ -99,25 +107,30 @@
         </div>
       </div>
 
-      <!-----------Right Items------------->
-      <div class="taskbar-right">
-        <div class="wifi">
-          <img src="/icons/wifi.png" alt="Wifi" class="right-icons">
-          <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
-          </div>
-        <div class="battery">
-          <img src="/icons/battery.png" alt="Battery" class="right-icons"/>
-          <!--<a href="https://www.flaticon.com/free-icons/battery" title="battery icons">Battery icons created by Stockio - Flaticon</a>-->
+    <!-----------Right Items------------->
+    <div class="taskbar-right">
+      <div>
+        {#if $tokenStore}
+        <button class="logout-btn" on:click={logout}>Logout</button>
+        {/if}
+      </div>
+      <div class="wifi">
+        <img src="/icons/wifi.png" alt="Wifi" class="right-icons">
+        <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
         </div>
-        <div class="datetime">
-          <div class="clock">11:52 AM</div>
-          <div class="date">10/31/2025</div>
-        </div>
+      <div class="battery">
+        <img src="/icons/battery.png" alt="Battery" class="right-icons"/>
+        <!--<a href="https://www.flaticon.com/free-icons/battery" title="battery icons">Battery icons created by Stockio - Flaticon</a>-->
+      </div>
+      <div class="datetime">
+        <div class="clock">11:52 AM</div>
+        <div class="date">10/31/2025</div>
       </div>
     </div>
-    <LoginModal />
   </div>
-  <!--Login Modal on site launch-->
+  <LoginModal />
+</div>
+<!--Login Modal on site launch-->
 
 
   <!----------------------------------STYLES------------------------------------->
@@ -250,15 +263,32 @@
       flex-wrap: wrap;
     }
 
-    .search-input {
-      padding: 6px 10px;
-      font-size: 15px;
-      border-radius: 6px;
-      background-color: #e0e0e0;
-      width: 100%;
-      max-width: 250%;
-      box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
-    }
+  .search-input {
+    padding: 6px 10px;
+    font-size: 15px;
+    border-radius: 6px;
+    background-color: #e0e0e0;
+    width: 100%;
+    max-width: 250%;
+    box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
+  }
+
+  /* Logout Button */
+  .logout-btn {
+    background-color: #ef4444;
+    color: white;
+    font-family: 'Roboto Mono', monospace;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 12px;
+  }
+
+  .logout-btn:hover {
+    background-color: #dc2626;
+  }
 
     /* Taskbar Right */
     .taskbar-right {
