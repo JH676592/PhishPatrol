@@ -72,7 +72,6 @@ public class AuthController {
     @PostMapping("/save-score")
     public ResponseEntity<String> saveScore(@RequestBody ScoreRequest request) {
 
-        // 1. Find the user OR create a new one if missing
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseGet(() -> {
                     User newUser = new User();
@@ -82,11 +81,9 @@ public class AuthController {
                     return newUser;
                 });
 
-        // 2. High Score Logic
         if (request.getScore() > user.getScore()) {
             user.setScore(request.getScore());
 
-            // 3. Save to MongoDB (This works for both new AND existing users)
             userRepository.save(user);
 
             return ResponseEntity.ok("Score saved successfully!");
@@ -99,7 +96,6 @@ public class AuthController {
         private String username;
         private int score;
 
-        // Getters and setters needed for JSON conversion
         public String getUsername() {
             return username;
         }
@@ -117,7 +113,6 @@ public class AuthController {
         }
     }
 
-    // Endpoint to Get Leaderboard
     @GetMapping("/leaderboard")
     public List<User> getLeaderboard() {
         Sort sort = Sort.by(Sort.Direction.DESC, "score"); 
