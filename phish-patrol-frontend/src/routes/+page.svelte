@@ -57,10 +57,9 @@ function handleComplete() {
 <div class="desktop">
   <header class="header">
     <div class="header-content">
-      <h1>PHISH PATROL</h1>
-      <img src="/icons/fishing.png" alt="Fish" class="logo"/>
-      <!----<a href="https://www.flaticon.com/free-icons/fishing" title="fishing icons">Fishing icons created by Hilmy Abiyyu A. - Flaticon</a>-->
+      <img class="logo" src="background/logoname.png" alt="Phish Patrol logo"/>
     </div>
+      
   </header>
 
   <!---------Desktop Icons------------>
@@ -156,28 +155,13 @@ function handleComplete() {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-  }
-
-  header h1 {
-    font-family: 'Roboto Mono';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 48px;
-    line-height: 140%;
     text-align: center;
-    letter-spacing: 0.15em;
-    color: #000000;
-    mix-blend-mode: hard-light;
-    opacity: 0.8;
+    height: 200px;
   }
 
   .logo {
-    height: 65px;
-    width: 65px;
-    line-height: 140%;
-    text-align: center;
-
+    width: 420px;  
+    height: auto; 
   }
 
   /* Taskbar */
