@@ -136,7 +136,7 @@
       </div>
       <div class="left-item"> 
         <button class="taskbar-button" on:click={openLeaderboard} type="button">
-          <img src="/icons/tutorial.png" alt="Leaderboard" class="left-icons" />
+          <img src="/icons/leaderboard.png" alt="Leaderboard" class="left-icons" />
           <div class="left-label">Leaderboard</div> 
         </button>
       </div>
