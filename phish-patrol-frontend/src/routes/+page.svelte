@@ -24,7 +24,6 @@
     clearScenarioQueue();
   }
 
-  
   // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
   function openMessages() {
     if (iconsDisabled) return;
@@ -84,8 +83,11 @@
 
     <!---------Game Info Popup---------->
     {#if showGameInfo}
-      <GameInfo on:startGame={handleStart}/>
+      <GameInfo on:startGame={handleStart}
+      onClose={() => showGameInfo = false}
+      />
     {/if}
+
     {#if showLeaderboard}
     <LeaderboardModal onClose={handleLeaderboardClose} />
     {/if}
@@ -117,14 +119,14 @@
       <!-----------Left Items------------>
       <div class="taskbar-left">
         <div class="left-item">
-            <button class="icon-button" on:click={() => showGameInfo = true}> 
+            <button class="play-button" on:click={() => { showGameInfo = true}}> 
               <img src="/icons/play.png" alt="Play" class="left-icons"/>
               <!-----<a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a>-->
               <div class="left-label">Play</div>
             </button>
           </div>
         <div class="left-item">
-          <button class="taskbar-button" on:click={openLeaderboard} type="button">
+          <button class="leaderboard-btn" on:click={() => { openLeaderboard(); }}>
             <img
               src="/icons/leaderboard.png"
               alt="Leaderboard"
@@ -133,10 +135,12 @@
             <div class="left-label">Leaderboard</div>
           </button>
         </div>
-	<div class="left-item" on:click={toggleTutorial}>
+	      <div class="left-item">
+          <button class="database-btn" on:click={() => { toggleTutorial(); }}>
           <img src="/icons/book.png" alt="Database" class="left-icons"/>
-        <div class="left-label">Database</div>
-      </div>
+            <div class="left-label">Database</div>
+          </button>
+        </div>
       </div>
 
       <!-----------Center Items-------------->
@@ -223,7 +227,7 @@
       flex-wrap: wrap;
     }
 
-    .taskbar-button {
+    .leaderboard-btn {
       background: transparent;
       border: none;
       padding: 0;
@@ -235,6 +239,10 @@
       align-items: center;
       width: 100%;
       line-height: normal;
+    }
+
+    .leaderboard-btn:hover {
+      color: rgb(170, 105, 224);
     }
 
     .taskbar-center, .taskbar-left, .taskbar-right {
@@ -272,7 +280,7 @@
       font-size: 12px;
     }
 
-    .icon-button {
+    .play-button {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -282,6 +290,27 @@
       cursor: pointer;
       color: inherit;
       font: inherit;
+    }
+
+    .play-button:hover {
+      color: rgb(204, 92, 124);
+    }
+
+    .database-btn {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      line-height: normal;
+    }
+    .database-btn:hover {
+      color: rgb(166, 220, 84);
     }
 
     .left-icons {

@@ -40,6 +40,12 @@
     return formatted;
   }
 
+  function playSound(isCorrect: boolean) {
+    const soundId = isCorrect ? "correct-sound" : "incorrect-sound";
+    const audio = document.getElementById(soundId) as HTMLAudioElement;
+    audio?.play();
+  }
+
   // Take answer from player and returns feedback msg
   function handleAnswer(choice: boolean) {
     userChoice = choice;
@@ -47,17 +53,21 @@
 
     const isCorrect = choice === currentScenario.isScam;
 
-    // Feedback message returned depending on user answer
-    feedbackMessage = isCorrect ? 'CORRECT' : 'INCORRECT';
+    playSound(isCorrect);
 
-    typedExplanation = '';
-
-    //Call typewriter function for typing effect for feedback msg
-    typeWriter(currentScenario.explanation);
-  
     setTimeout(() => {
-      feedbackRef?.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
-    }, 0);
+      // Feedback message returned depending on user answer
+      feedbackMessage = isCorrect ? 'CORRECT' : 'INCORRECT';
+      
+      
+      requestAnimationFrame(() => {
+        typedExplanation = '';
+        //Call typewriter function for typing effect for feedback msg
+        typeWriter(currentScenario.explanation);
+
+        feedbackRef?.scrollIntoView({ behavior: 'smooth', block: 'start' }); 
+      });
+    }, 300);
   }
 
   function typeWriter(text: string, speed = 25) {
@@ -91,6 +101,10 @@
   }
 
 </script>
+
+<!-------AUDIO------->
+<audio id="correct-sound" src="/sounds/correct.mp3" preload="auto"></audio>
+<audio id="incorrect-sound" src="/sounds/incorrect.wav" preload="auto"></audio>
 
 <div class="window">
     <div class="window-header">

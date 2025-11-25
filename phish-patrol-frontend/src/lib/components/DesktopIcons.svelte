@@ -78,7 +78,7 @@
       width: 80px;
       text-align: center;
       text-decoration: none;
-      color: black;
+      color: rgb(255, 255, 255);
       background-color: transparent;
       border: none;
       cursor: pointer
@@ -86,7 +86,17 @@
   .icon-label {
     font-size: .9rem;
     font-weight: 400;
-    letter-spacing: .04rem;
+    letter-spacing: .08rem;
+    font-family: "Bagel Fat One", system-ui;
+       text-shadow:   
+      -1px -1px 0 #161548d1,
+      1px -1px 0 #0d0c2bd1,
+      -1px  1px 0 #252373d1,
+      1px  1px 0 #11103ad1;
+  }
+
+  .icon:hover {
+    color: #78a8df;
   }
 
   .icon-img {

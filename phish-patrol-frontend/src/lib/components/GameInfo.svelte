@@ -1,14 +1,17 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   const dispatch = createEventDispatcher();
-
+  export let onClose: () => void;
+  
   function startGame() {
     dispatch('startGame');
   }
 </script>
 
 <div class="window">
-    <div class="window-header">Welcome</div>
+    <div class="window-header">Welcome
+      <button class="close-btn" on:click={onClose}>×</button>
+    </div>
     <div class="window-body">
         <div class="intro-title">
             <span class="title-text">How to Play</span>
@@ -44,7 +47,7 @@
                 <li>Stay motivated and compare your score to the stats in the <strong>Leaderboard</strong>.</li>
             </ul>
 
-            <button class="btn btn-next" on:click={startGame}>Start Game</button>
+            <button class="btn btn-next" on:click={() => { startGame(); }}>Start Game</button>
         </div>
     </div>
 
@@ -82,6 +85,7 @@
   background: #3c1f7a;
   color: white;
   padding: 8px;
+  position: relative;
   font-weight: bold;
   font-size: 1.3rem;
   text-align: center;
@@ -92,6 +96,23 @@
   border: 2px solid black;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
+}
+
+.close-btn {
+  position: absolute;
+  right: 15px;    
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-btn:hover {
+  color: #ffcccc;
 }
 
 /*----------------BODY------------------*/
