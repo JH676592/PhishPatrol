@@ -7,22 +7,22 @@
   import type { Scenario } from '$lib/types';
   import { ScenarioType } from '$lib/types';
   import { get } from 'svelte/store';
+  import GameInfo from '$lib/components/GameInfo.svelte';
 
-  
+  let showMessages = false;
+  let currentScenario: Scenario | null = null;
+  let iconsDisabled = true;
+  let showGameInfo = false;
+
   function logout() {
     localStorage.removeItem('token');
     tokenStore.set('');
     clearScenarioQueue();
   }
 
-  let showMessages = false;
-  let currentScenario: Scenario | null = null;
-  let showLogin = true; 
-  let iconsDisabled = false;
-
   // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
   function openMessages() {
-    iconsDisabled = true;
+    if (iconsDisabled) return;
     const queue = get(scenarioQueue); //queue
     const nextSMS = queue.find(s => s.type === ScenarioType.SMS); //first sms in queue
     if (nextSMS) {
@@ -34,7 +34,7 @@
 
   // Same as for SMS but Email
   function openEmail() {
-    iconsDisabled = true;
+    if (iconsDisabled) return;
     const queue = get(scenarioQueue);
     const nextEmail = queue.find(s => s.type === ScenarioType.EMAIL);
     if (nextEmail) {
@@ -48,7 +48,12 @@
   function handleComplete() {
       showMessages = false; //hide MessageWindow
       currentScenario = null; //clear current scenario
-      iconsDisabled = false;
+      //iconsDisabled = false;
+  }
+
+  function handleStart() {
+    showGameInfo = false;
+    iconsDisabled = false;
   }
 
   </script>
@@ -60,11 +65,16 @@
   </head>
 
   <div class="desktop">
-   <header class="header">
-     <div class="header-content">
+
+    <!---------Game Info Popup---------->
+    {#if showGameInfo}
+      <GameInfo on:startGame={handleStart}/>
+    {/if}
+
+    <header class="header">
+    <div class="header-content">
       <img class="logo" src="background/logoname.png" alt="Phish Patrol logo"/>
-      </div>
-      
+    </div>
     </header>
 
     <!---------Desktop Icons------------>
@@ -84,10 +94,12 @@
       <!-----------Left Items------------>
       <div class="taskbar-left">
         <div class="left-item">
-            <img src="/icons/play.png" alt="Play" class="left-icons"/>
-          <!-----<a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a>-->
-          <div class="left-label">Play</div>
-        </div>
+            <button class="icon-button" on:click={() => showGameInfo = true}> 
+              <img src="/icons/play.png" alt="Play" class="left-icons"/>
+              <!-----<a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a>-->
+              <div class="left-label">Play</div>
+            </button>
+          </div>
         <div class="left-item">
           <img src="/icons/book.png" alt="Resources" class="left-icons"/>
           <div class="left-label">Resources</div>
@@ -127,7 +139,7 @@
       </div>
     </div>
   </div>
-  <LoginModal />
+  <LoginModal on:loginSuccess={()=> showGameInfo = true} />
 </div>
 <!--Login Modal on site launch-->
 
@@ -178,7 +190,7 @@
       overflow: hidden;
       min-width: 0;
       height: 78px;
-      padding: 0 16px;
+      padding-bottom: 6px;
       background: #b9b2b29e;
       flex-wrap: wrap;
     }
@@ -218,6 +230,18 @@
       font-size: 12px;
     }
 
+    .icon-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: inherit;
+      font: inherit;
+    }
+
     .left-icons {
       width: 50px;
       height: 50px;
@@ -225,16 +249,17 @@
     }
 
     .left-label {
+      font-family: "Bagel Fat One", system-ui;
       margin-top: 2px;
       font-size: 14px;
-      font-weight: 800;
+      font-weight: 500;
       text-align: center;  
-      letter-spacing: 1px;
+      letter-spacing: 0.08rem;
       text-shadow:   
-      -1px -1px 0 #2a2699d1,
-      1px -1px 0 #2a2699d1,
-      -1px  1px 0 #2a2699d1,
-      1px  1px 0 #2a2699d1;
+      -1px -1px 0 #161548d1,
+      1px -1px 0 #0d0c2bd1,
+      -1px  1px 0 #252373d1,
+      1px  1px 0 #11103ad1;
     }
 
 

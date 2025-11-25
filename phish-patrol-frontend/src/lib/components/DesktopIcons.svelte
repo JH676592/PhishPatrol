@@ -1,6 +1,8 @@
 <script lang="ts">
   import { scenarioQueue } from '$lib/stores/scenarioQueue';
   import { ScenarioType } from '$lib/types';
+  import { createEventDispatcher } from 'svelte';
+
 
   export let on: { openMessages: () => void; openEmail: () => void};
   
@@ -12,8 +14,8 @@
   let smsCount = 0;
 
   // when scenarioQueue store changes it updates emailCount, same for smsCount
-  $: emailCount = $scenarioQueue.filter(s => s.type === ScenarioType.EMAIL).length;
-  $: smsCount = $scenarioQueue.filter(s => s.type === ScenarioType.SMS).length;
+  $: emailCount = disabled ? 0 : $scenarioQueue.filter(s => s.type === ScenarioType.EMAIL).length;
+  $: smsCount = disabled ? 0 : $scenarioQueue.filter(s => s.type === ScenarioType.SMS).length;
 
   // Called when email icon clicked and opens msg window
   function handleClickMessages() {
