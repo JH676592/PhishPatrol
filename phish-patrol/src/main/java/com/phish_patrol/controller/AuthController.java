@@ -14,6 +14,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -43,6 +45,7 @@ public class AuthController {
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setName(request.getName());
         user.setExperience(request.getExperience());
+        user.setScore(0);
 
         userRepository.save(user);
         return ResponseEntity.ok("User registered successfully!");
@@ -65,5 +68,55 @@ public class AuthController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
+    }
+
+    @PostMapping("/save-score")
+    public ResponseEntity<String> saveScore(@RequestBody ScoreRequest request) {
+
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseGet(() -> {
+                    User newUser = new User();
+                    newUser.setUsername(request.getUsername());
+                    newUser.setScore(0); // Start with 0
+                    // NOTE: This user won't have a password yet!
+                    return newUser;
+                });
+
+        if (request.getScore() > user.getScore()) {
+            user.setScore(request.getScore());
+
+            userRepository.save(user);
+
+            return ResponseEntity.ok("Score saved successfully!");
+        }
+
+        return ResponseEntity.ok("Score received (not a new high score).");
+    }
+
+    static class ScoreRequest {
+        private String username;
+        private int score;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public int getScore() {
+            return score;
+        }
+
+        public void setScore(int score) {
+            this.score = score;
+        }
+    }
+
+    @GetMapping("/leaderboard")
+    public List<User> getLeaderboard() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "score"); 
+        return userRepository.findTop10By(sort);
     }
 }

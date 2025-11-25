@@ -3,6 +3,7 @@
   import DesktopIcons from '$lib/components/DesktopIcons.svelte';
   import { tokenStore } from '$lib/stores/auth';
   import MessageWindow from '$lib/components/MessageWindow.svelte';
+  import LeaderboardModal from "$lib/components/LeaderboardModal.svelte";
   import InfoWindow from '$lib/components/InfoWindow.svelte';
   import { scenarioQueue, removeScenarioFromQueue, clearScenarioQueue } from '$lib/stores/scenarioQueue';
   import type { Scenario } from '$lib/types';
@@ -15,6 +16,7 @@
   let iconsDisabled = true;
   let showGameInfo = false;
   let showTutorial = false;
+  let showLeaderboard = false;
 
   function logout() {
     localStorage.removeItem('token');
@@ -54,6 +56,13 @@
       //iconsDisabled = false;
   }
 
+  function openLeaderboard() {
+    showLeaderboard = true;
+  }
+  function handleLeaderboardClose() {
+    showLeaderboard = false;
+  }
+
   function handleStart() {
     showGameInfo = false;
     iconsDisabled = false;
@@ -76,6 +85,9 @@
     <!---------Game Info Popup---------->
     {#if showGameInfo}
       <GameInfo on:startGame={handleStart}/>
+    {/if}
+    {#if showLeaderboard}
+    <LeaderboardModal onClose={handleLeaderboardClose} />
     {/if}
 
     <header class="header">
@@ -112,8 +124,14 @@
             </button>
           </div>
         <div class="left-item">
-          <img src="/icons/tutorial.png" alt="Leaderboard" class="left-icons"/>
-          <div class="left-label">Leaderboard</div>
+          <button class="taskbar-button" on:click={openLeaderboard} type="button">
+            <img
+              src="/icons/leaderboard.png"
+              alt="Leaderboard"
+              class="left-icons"
+            />
+            <div class="left-label">Leaderboard</div>
+          </button>
         </div>
 	<div class="left-item" on:click={toggleTutorial}>
           <img src="/icons/book.png" alt="Database" class="left-icons"/>
@@ -203,6 +221,20 @@
       padding-bottom: 6px;
       background: #b9b2b29e;
       flex-wrap: wrap;
+    }
+
+    .taskbar-button {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      line-height: normal;
     }
 
     .taskbar-center, .taskbar-left, .taskbar-right {
