@@ -112,12 +112,12 @@
             </button>
           </div>
         <div class="left-item">
-          <img src="/icons/book.png" alt="Resources" class="left-icons"/>
-          <div class="left-label">Resources</div>
+          <img src="/icons/tutorial.png" alt="Leaderboard" class="left-icons"/>
+          <div class="left-label">Leaderboard</div>
         </div>
 	<div class="left-item" on:click={toggleTutorial}>
-          <img src="/icons/tutorial.png" alt="Tutorial" class="left-icons"/>
-        <div class="left-label">Tutorial</div>
+          <img src="/icons/book.png" alt="Database" class="left-icons"/>
+        <div class="left-label">Database</div>
       </div>
       </div>
 
@@ -297,7 +297,7 @@
     .logout-btn {
       background-color: #ef4444;
       color: white;
-      font-family: 'Roboto Mono', monospace;
+      font-family: "Montserrat", sans-serif;
       padding: 0.5rem 1rem;
       border-radius: 8px;
       font-size: 0.9rem;

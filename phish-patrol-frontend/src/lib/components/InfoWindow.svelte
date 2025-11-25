@@ -125,17 +125,22 @@
   }
 
   .window-header {
-    background: -webkit-linear-gradient(135deg, #306997, #183f5a);
-    color: white;
-    padding: 10px 20px;
-    letter-spacing: 1.7px;
-    font-weight: bold;
-    font-size: 1.1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-shadow: 8px 8px 8px rgba(0, 0, 0, 0.3);
-    box-shadow: inset 0 -40px 14px rgba(0, 0, 0, 0.1);
+     font-family: "Montserrat", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+      background: #3c1f7a;
+      color: white;
+      padding: 8px;
+      font-weight: bold;
+      font-size: 1.3rem;
+      text-align: center;
+      box-shadow: inset 0 -2px 6px rgba(0,0,0,0.1);
+      border-color: #1a1a1a;
+      border-width: 1px;
+      letter-spacing: 0.18rem;
+      border: 2px solid black;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
   }
 
   .close-btn {
@@ -245,12 +250,12 @@
   }
 
   .btn-close {
-    background-color: #555;
+    background-color: #3c1f7a;
     color: white;
   }
 
   .btn-close:hover {
-    background-color: #333;
+    background-color: #190535;
   }
 
   @keyframes fadeIn {
