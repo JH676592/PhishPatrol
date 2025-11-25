@@ -19,8 +19,5 @@
 		"svelte-check": "^4.0.0",
 		"typescript": "^5.0.0",
 		"vite": "^6.0.0"
-	},
-	"dependencies": {
-		"@google/genai": "^1.24.0"
 	}
 }
