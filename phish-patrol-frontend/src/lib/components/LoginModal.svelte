@@ -171,7 +171,6 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     width: 340px;
     overflow: hidden;
-    z-index: 1000;
   }
 
   .title-bar {
@@ -191,6 +190,9 @@
       border: 2px solid black;
       border-top-left-radius: 8px;
       border-top-right-radius: 8px;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center
   }
 
   .window-title {
