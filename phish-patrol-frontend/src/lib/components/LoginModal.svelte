@@ -161,7 +161,7 @@
 
 <style>
   .modal {
-    font-family: 'Roboto Mono', monospace;
+    font-family: "Montserrat", sans-serif;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -175,13 +175,22 @@
   }
 
   .title-bar {
-    background: linear-gradient(to right, #4b5563, #6b7280);
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
+     font-family: "Montserrat", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+      background: #3c1f7a;
+      color: white;
+      padding: 8px;
+      font-weight: bold;
+      font-size: 1.3rem;
+      text-align: center;
+      box-shadow: inset 0 -2px 6px rgba(0,0,0,0.1);
+      border-color: #1a1a1a;
+      border-width: 1px;
+      letter-spacing: 0.18rem;
+      border: 2px solid black;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
   }
 
   .window-title {
@@ -237,7 +246,8 @@
     border-radius: 10px;
     padding: 0.6rem;
     font-size: 1rem;
-    font-weight: 500;
+    font-weight: 600;
+    font-family: "Montserrat", sans-serif;
   }
 
   button:hover{
@@ -252,6 +262,7 @@
   .login-btn {
     background-color: #3b82f6;
     color: white;
+    font-family: "Montserrat", sans-serif;
   }
 
   .login-btn:hover {
@@ -292,13 +303,15 @@
     left: 90%;
     display: flex;
     align-items: center;
+    font-family: "Montserrat", sans-serif;
 }
 
 
   .login {
-    background-color: #3d13f7;
+    background-color: #3c1f7a;
     color: white;
-    font-family: 'Roboto Mono', monospace;
+    letter-spacing: 0.10rem;
+    font-family: "Montserrat", sans-serif;
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -310,12 +323,12 @@
   }
 
   .login:hover{
-    background-color: #310fc8;
+    background-color: #200b7d;
   }
 
   .exp-title{
     color: #374151;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
 
   .beginner-btn{
