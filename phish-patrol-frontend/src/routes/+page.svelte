@@ -1,376 +1,140 @@
 <script lang="ts">
-  import LoginModal from '$lib/components/LoginModal.svelte'; 
-  import DesktopIcons from '$lib/components/DesktopIcons.svelte';
-  import { tokenStore } from '$lib/stores/auth';
-  import MessageWindow from '$lib/components/MessageWindow.svelte';
-  import LeaderboardModal from "$lib/components/LeaderboardModal.svelte";
-  import InfoWindow from '$lib/components/InfoWindow.svelte';
-  import { scenarioQueue, removeScenarioFromQueue, clearScenarioQueue } from '$lib/stores/scenarioQueue';
-  import type { Scenario } from '$lib/types';
-  import { ScenarioType } from '$lib/types';
-  import { get } from 'svelte/store';
-  import GameInfo from '$lib/components/GameInfo.svelte';
+  import { invalidateAll } from '$app/forms';
+  import type { PageData } from './$types';
 
-  let showMessages = false;
-  let currentScenario: Scenario | null = null;
-  let iconsDisabled = true;
-  let showGameInfo = false;
-  let showTutorial = false;
-  let showLeaderboard = false;
+  export let data: PageData;
 
-  function logout() {
-    localStorage.removeItem('token');
-    tokenStore.set('');
-    clearScenarioQueue();
+  let isAnswered: boolean = false;
+  let userChoice: boolean | null = null;
+
+  /**
+   * Handles the user's answer submission.
+   * @param choice - The user's guess (true if they think it's a scam).
+   */
+  function handleAnswer(choice: boolean): void {
+    userChoice = choice;
+    isAnswered = true;
+    if (userChoice === data.scenario.isScam) {
+	// implement score or lives here
+    }
   }
 
+  /**
+   * Resets the state and triggers the `load` function again to get a new scenario.
+   */
+  function handleNext(): void {
+    isAnswered = false;
+    userChoice = null;
+    // invalidateAll() tells SvelteKit to re-run all active `load` functions.
+    invalidateAll();
+  }
+</script>
+
+<div class="container">
   
-  // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
-  function openMessages() {
-    if (iconsDisabled) return;
-    const queue = get(scenarioQueue); //queue
-    const nextSMS = queue.find(s => s.type === ScenarioType.SMS); //first sms in queue
-    if (nextSMS) {
-      currentScenario = nextSMS; //set as current
-      showMessages = true; //show MessageWindow
-      removeScenarioFromQueue(nextSMS.id); //remove from queue
-    }
-  }
+  <header>
+    <h1>Phish Patrol 🕵️</h1>
+  </header>
 
-  // Same as for SMS but Email
-  function openEmail() {
-    if (iconsDisabled) return;
-    const queue = get(scenarioQueue);
-    const nextEmail = queue.find(s => s.type === ScenarioType.EMAIL);
-    if (nextEmail) {
-      currentScenario = nextEmail;
-      showMessages = true;
-      removeScenarioFromQueue(nextEmail.id);
-    }
-  }
+  {#if data.scenario && !data.scenario.error}
+    <main>
+      <div class="scenario-box">
+        <p>{data.scenario.content}</p>
+      </div>
 
-  // handles closing window when user selects continue button
-  function handleComplete() {
-      showMessages = false; //hide MessageWindow
-      currentScenario = null; //clear current scenario
-      //iconsDisabled = false;
-  }
-
-  function openLeaderboard() {
-    showLeaderboard = true;
-  }
-  function handleLeaderboardClose() {
-    showLeaderboard = false;
-  }
-
-  function handleStart() {
-    showGameInfo = false;
-    iconsDisabled = false;
-  }
-
-  function toggleTutorial() {
-    showTutorial = !showTutorial;
-  }
-
-  </script>
-
-  <!-----------------------------DESKTOP/HOME PAGE----------------------------------------->
-
-  <head>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
-  </head>
-
-  <div class="desktop">
-
-    <!---------Game Info Popup---------->
-    {#if showGameInfo}
-      <GameInfo on:startGame={handleStart}/>
-    {/if}
-    {#if showLeaderboard}
-    <LeaderboardModal onClose={handleLeaderboardClose} />
-    {/if}
-
-    <header class="header">
-    <div class="header-content">
-      <img class="logo" src="background/logoname.png" alt="Phish Patrol logo"/>
-    </div>
-    </header>
-
-    <!---------Desktop Icons------------>
-    <DesktopIcons
-      disabled={iconsDisabled}
-      scenarioOpen={showMessages}
-      on={{ openMessages, openEmail }}/>
-
-    <!---------Message Window------------>
-    {#if showMessages && currentScenario}
-        <MessageWindow {currentScenario} onComplete={handleComplete}/>
-    {/if}
-
-    {#if showTutorial}
-      <InfoWindow onClose={toggleTutorial} />
-    {/if}
-
-    <!-----------------------------Taskbar---------------------------------->
-    <div class="taskbar">
-
-      <!-----------Left Items------------>
-      <div class="taskbar-left">
-        <div class="left-item">
-            <button class="icon-button" on:click={() => showGameInfo = true}> 
-              <img src="/icons/play.png" alt="Play" class="left-icons"/>
-              <!-----<a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a>-->
-              <div class="left-label">Play</div>
+      {#if !isAnswered}
+        <div class="action-area">
+          <p class="prompt">Is this a scam or legitimate?</p>
+          <div class="button-group">
+            <button class="btn btn-scam" on:click={() => handleAnswer(true)}>
+              Scam
+            </button>
+            <button class="btn btn-legit" on:click={() => handleAnswer(false)}>
+              Legit
             </button>
           </div>
-        <div class="left-item">
-          <button class="taskbar-button" on:click={openLeaderboard} type="button">
-            <img
-              src="/icons/leaderboard.png"
-              alt="Leaderboard"
-              class="left-icons"
-            />
-            <div class="left-label">Leaderboard</div>
-          </button>
         </div>
-	<div class="left-item" on:click={toggleTutorial}>
-          <img src="/icons/book.png" alt="Database" class="left-icons"/>
-        <div class="left-label">Database</div>
-      </div>
-      </div>
-
-      <!-----------Center Items-------------->
-      <div class="taskbar-center">
-        <div class="search-container">
-            <input type="text" class="search-input" placeholder="Search database..."/>
-        </div>
-      </div>
-
-    <!-----------Right Items------------->
-    <div class="taskbar-right">
-      <div>
-        {#if $tokenStore}
-        <button class="logout-btn" on:click={logout}>Logout</button>
-        {/if}
-      </div>
-      <div class="wifi">
-        <img src="/icons/wifi.png" alt="Wifi" class="right-icons">
-        <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
-        </div>
-      <div class="battery">
-        <img src="/icons/battery.png" alt="Battery" class="right-icons"/>
-        <!--<a href="https://www.flaticon.com/free-icons/battery" title="battery icons">Battery icons created by Stockio - Flaticon</a>-->
-      </div>
-      <div class="datetime">
-        <div class="clock">11:52 AM</div>
-        <div class="date">10/31/2025</div>
-      </div>
-    </div>
-  </div>
-  <LoginModal on:loginSuccess={()=> showGameInfo = true} />
+      {/if}
+    </main>
+  {:else}
+     <p class="error-message">{data.scenario?.error || "An unknown error occurred."}</p>
+  {/if}
 </div>
-<!--Login Modal on site launch-->
 
+<style>
+  .container {
+    max-width: 650px;
+    margin: 2rem auto;
+    padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+  }
 
-  <!----------------------------------STYLES------------------------------------->
-  <style>
+  header h1 {
+    font-size: 2.5rem;
+    color: #0056b3;
+    margin-bottom: 0.5rem;
+  }
 
-    :global(html,body) {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      overflow: hidden;
-    }
+  /* Scenario & Action Styles */
+  .scenario-box {
+    padding: 1.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #ffffff;
+    margin-bottom: 2rem;
+    text-align: left;
+    white-space: pre-wrap;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
 
-    .desktop {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      background: url('/background/desktop.png') no-repeat center center;
-      background-size: cover;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-      flex-wrap: wrap;
-    }
+  .prompt {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
 
-    .header-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      height: 200px;
-    }
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
 
-    .logo {
-      width: 420px;  
-      height: auto; 
-    }
+  .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
 
-    /* Taskbar */
-    .taskbar {
-      display: flex;
-      flex-wrap: nowrap;
-      justify-content: space-between;
-      align-items: center;
-      overflow: hidden;
-      min-width: 0;
-      height: 78px;
-      padding-bottom: 6px;
-      background: #b9b2b29e;
-      flex-wrap: wrap;
-    }
+  .btn:hover {
+    opacity: 0.9;
+  }
+  
+  .btn:active {
+    transform: scale(0.98);
+  }
 
-    .taskbar-button {
-      background: transparent;
-      border: none;
-      padding: 0;
-      margin: 0;
-      cursor: pointer;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      line-height: normal;
-    }
+  .btn-scam {
+    background-color: #dc3545;
+  }
 
-    .taskbar-center, .taskbar-left, .taskbar-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex: 1 1 auto;
-      min-width: 0;
-    }
+  .btn-legit {
+    background-color: #28a745;
+  }
 
-    .taskbar-center {
-      justify-content: center;
-      flex: 0 1 300px;
-    }
-
-    .taskbar-right {
-      justify-content: flex-end;
-    }
-    
-    /* Taskbar Left */
-    .taskbar-left {
-      display: flex;
-      gap: 40px;
-      padding: 10px;
-      flex-wrap: wrap;
-    }
-
-    .left-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: white;
-      cursor: pointer;
-      user-select: none;
-      font-size: 12px;
-    }
-
-    .icon-button {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: none;
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      color: inherit;
-      font: inherit;
-    }
-
-    .left-icons {
-      width: 50px;
-      height: 50px;
-      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.6));
-    }
-
-    .left-label {
-      font-family: "Bagel Fat One", system-ui;
-      margin-top: 2px;
-      font-size: 14px;
-      font-weight: 500;
-      text-align: center;  
-      letter-spacing: 0.08rem;
-      text-shadow:   
-      -1px -1px 0 #161548d1,
-      1px -1px 0 #0d0c2bd1,
-      -1px  1px 0 #252373d1,
-      1px  1px 0 #11103ad1;
-    }
-
-
-    /* Search Bar */
-    
-    .search-container {
-      display: flex;
-      flex: 1;
-      justify-content: center;
-      padding: 0 12px;
-      flex-wrap: wrap;
-    }
-
-    .search-input {
-      padding: 6px 10px;
-      font-size: 15px;
-      border-radius: 6px;
-      background-color: #e0e0e0;
-      width: 100%;
-      max-width: 250%;
-      box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
-    }
-
-    /* Logout Button */
-    .logout-btn {
-      background-color: #ef4444;
-      color: white;
-      font-family: "Montserrat", sans-serif;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      cursor: pointer;
-      margin-left: 12px;
-    }
-
-    .logout-btn:hover {
-      background-color: #dc2626;
-    }
-
-    /* Taskbar Right */
-    
-    .taskbar-right {
-      display: flex;
-      align-items: center;
-      padding: 5px;
-    }
-
-    .right-icons {
-      width: 30px;
-      height: 30px;
-      object-fit: contain;
-      padding: 12px;
-    }
-
-    .datetime {
-      display: flex;
-      padding: 10px;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-      color: rgb(0, 0, 0);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 1.1px;
-      text-shadow:   
-      .5px 0px 0 rgba(255, 255, 255, 0.653),
-      0px 0px 0 rgba(255, 255, 255, 0.653),
-      0px  0px 0 rgba(255, 255, 255, 0.653),
-      0px  0px 0 rgba(255, 255, 255, 0.653)
-    }
-  </style>
+  .error-message {
+    color: #dc3545;
+    font-size: 1.2rem;
+    padding: 2rem;
+  }
+</style>

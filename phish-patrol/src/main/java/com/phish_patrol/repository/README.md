@@ -1,1 +1,0 @@
-Data access layer, handles data access, talking to database, and where to define how to save, retrieve, update, or delete data objects.

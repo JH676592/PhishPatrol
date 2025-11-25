@@ -1,1 +1,0 @@
-Used to organize custom exception classes.
