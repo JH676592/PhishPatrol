@@ -60,12 +60,11 @@
   </head>
 
   <div class="desktop">
-    <header class="header">
-      <div class="header-content">
-        <h1>PHISH PATROL</h1>
-        <img src="/icons/fishing.png" alt="Fish" class="logo"/>
-        <!----<a href="https://www.flaticon.com/free-icons/fishing" title="fishing icons">Fishing icons created by Hilmy Abiyyu A. - Flaticon</a>-->
+   <header class="header">
+     <div class="header-content">
+      <img class="logo" src="background/logoname.png" alt="Phish Patrol logo"/>
       </div>
+      
     </header>
 
     <!---------Desktop Icons------------>
@@ -161,28 +160,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-    }
-
-    header h1 {
-      font-family: 'Roboto Mono';
-      font-style: normal;
-      font-weight: 700;
-      font-size: 48px;
-      line-height: 140%;
       text-align: center;
-      letter-spacing: 0.15em;
-      color: #000000;
-      mix-blend-mode: hard-light;
-      opacity: 0.8;
+      height: 200px;
     }
 
     .logo {
-      height: 65px;
-      width: 65px;
-      line-height: 140%;
-      text-align: center;
-
+      width: 420px;  
+      height: auto; 
     }
 
     /* Taskbar */
@@ -255,6 +239,7 @@
 
 
     /* Search Bar */
+    
     .search-container {
       display: flex;
       flex: 1;
@@ -263,34 +248,35 @@
       flex-wrap: wrap;
     }
 
-  .search-input {
-    padding: 6px 10px;
-    font-size: 15px;
-    border-radius: 6px;
-    background-color: #e0e0e0;
-    width: 100%;
-    max-width: 250%;
-    box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
-  }
+    .search-input {
+      padding: 6px 10px;
+      font-size: 15px;
+      border-radius: 6px;
+      background-color: #e0e0e0;
+      width: 100%;
+      max-width: 250%;
+      box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
+    }
 
-  /* Logout Button */
-  .logout-btn {
-    background-color: #ef4444;
-    color: white;
-    font-family: 'Roboto Mono', monospace;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin-left: 12px;
-  }
+    /* Logout Button */
+    .logout-btn {
+      background-color: #ef4444;
+      color: white;
+      font-family: 'Roboto Mono', monospace;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 12px;
+    }
 
-  .logout-btn:hover {
-    background-color: #dc2626;
-  }
+    .logout-btn:hover {
+      background-color: #dc2626;
+    }
 
     /* Taskbar Right */
+    
     .taskbar-right {
       display: flex;
       align-items: center;
