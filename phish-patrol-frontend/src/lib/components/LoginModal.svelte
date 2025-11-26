@@ -1,14 +1,13 @@
 <script>
   import { writable } from 'svelte/store';
   import { onMount } from 'svelte';
+  import { tokenStore, visibleStore } from '$lib/stores/auth';
 
   let username = '';
   let password = '';
-  let email = '';
-  export const visibleStore = writable(true); // control modal visibility
+  let name = '';
   let errorRegisterText = '';
-
-  export const tokenStore = writable('');
+  let experience = 'Beginner'; //automatically beginner
 
   // chaniging modal to Register vars
   let loginTitle = "Login"
@@ -20,6 +19,11 @@
   errorRegister = writable(false);
 
   function closeModal() {
+    /*have to set all errors to default*/
+    errorIncorrectLogin.set(false);
+    errorPasswordLength.set(false);
+    errorUserAndPass.set(false);
+    errorRegister.set(false);
     visibleStore.set(false);
     loginVisibleStore.set(true);
   }
@@ -70,7 +74,7 @@
       return;
     }
 
-    if (!username.trim() || !password.trim()) {
+    if (!username.trim() || !password.trim() || !name.trim()) {
       errorUserAndPass.set(true);
       return;
     } else if (password.length < 8){
@@ -81,7 +85,7 @@
     const res = await fetch('http://localhost:8080/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password, name, experience }) //realized i never even added the email here in the first place
     });
 
     if (res.ok) {
@@ -109,7 +113,19 @@
     <input bind:value={username} placeholder="Username" />
     <input bind:value={password} type="password" placeholder="Password" />
     {#if !$loginVisibleStore}
-    <input bind:value={email} type="email" placeholder="Email (Optional)" />
+    <input bind:value={name} type="name" placeholder="Name" />
+    <div class="exp-container">
+      <p class="exp-title">Please select your experience:</p>
+      <button class="beginner-btn" class:selected={experience === 'Beginner'} on:click={() => experience = 'Beginner'}>
+        Beginner
+      </button>
+      <button class="intermediate-btn" class:selected={experience === 'Intermediate'} on:click={() => experience = 'Intermediate'}
+        >Intermediate
+      </button>
+      <button class="advanced-btn" class:selected={experience === 'Advanced'} on:click={() => experience = 'Advanced'}>
+        Advanced
+      </button>
+    </div>
     {/if}
 
     {#if $loginVisibleStore}
@@ -125,7 +141,7 @@
 
     <button class="register-btn" on:click={register}>Register</button>
     {#if $errorUserAndPass}
-    <p class="register-error">Username and password are required</p>
+    <p class="register-error">Username, password, and name are required</p>
     {/if}
     {#if $errorPasswordLength}
     <p class="register-error">The password needs to have at least 8 characters</p>
@@ -145,7 +161,7 @@
 
 <style>
   .modal {
-    font-family: 'Roboto Mono', monospace;
+    font-family: "Montserrat", sans-serif;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -155,17 +171,28 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
     width: 340px;
     overflow: hidden;
-    z-index: 1000;
   }
 
   .title-bar {
-    background: linear-gradient(to right, #4b5563, #6b7280);
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
+     font-family: "Montserrat", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+      background: #3c1f7a;
+      color: white;
+      padding: 8px;
+      font-weight: bold;
+      font-size: 1.3rem;
+      text-align: center;
+      box-shadow: inset 0 -2px 6px rgba(0,0,0,0.1);
+      border-color: #1a1a1a;
+      border-width: 1px;
+      letter-spacing: 0.18rem;
+      border: 2px solid black;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center
   }
 
   .window-title {
@@ -217,16 +244,27 @@
   button {
     cursor: pointer;
     border: none;
+    font-family: 'Roboto Mono', monospace;
     border-radius: 10px;
-    padding: 0.75rem;
+    padding: 0.6rem;
     font-size: 1rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    font-weight: 600;
+    font-family: "Montserrat", sans-serif;
   }
+
+  button:hover{
+    background-color:#c5c9d6;
+  }
+
+  button.selected {
+  border: 2px solid #2563eb;
+}
+
 
   .login-btn {
     background-color: #3b82f6;
     color: white;
+    font-family: "Montserrat", sans-serif;
   }
 
   .login-btn:hover {
@@ -263,24 +301,47 @@
 
   .login-container {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    top: 5%;
+    left: 90%;
     display: flex;
     align-items: center;
-    z-index: 2000;
+    font-family: "Montserrat", sans-serif;
 }
 
-.login {
-  font-family: 'Roboto Mono', monospace;
-  background-color: #5734f0;
-  color: white;
-  padding: 0.75rem 1.2rem;
-  border-radius: 10px;
-  font-size: 1rem;
-  position: relative;
-  left: 90%;
-  bottom: 42%;
-}
+
+  .login {
+    background-color: #3c1f7a;
+    color: white;
+    letter-spacing: 0.10rem;
+    font-family: "Montserrat", sans-serif;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 12px;
+    left: 90%;
+    bottom: 42%;
+  }
+
+  .login:hover{
+    background-color: #200b7d;
+  }
+
+  .exp-title{
+    color: #374151;
+    font-size: 0.9rem;
+  }
+
+  .beginner-btn{
+    font-size: 0.7rem;
+  }
+
+  .intermediate-btn{
+    font-size: 0.7rem;
+  }
+
+  .advanced-btn{
+    font-size: 0.7rem;
+  }
 </style>

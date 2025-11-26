@@ -1,34 +1,41 @@
 <script lang="ts">
   import { scenarioQueue } from '$lib/stores/scenarioQueue';
   import { ScenarioType } from '$lib/types';
+  import { createEventDispatcher } from 'svelte';
 
 
   export let on: { openMessages: () => void; openEmail: () => void};
   
+  export let scenarioOpen: boolean;
+  export let disabled: boolean = false;
+
   // Variables to keep track of email and sms count for queue
   let emailCount = 0;
   let smsCount = 0;
-  
+
   // when scenarioQueue store changes it updates emailCount, same for smsCount
-  $: emailCount = $scenarioQueue.filter(s => s.type === ScenarioType.EMAIL).length;
-  $: smsCount = $scenarioQueue.filter(s => s.type === ScenarioType.SMS).length;
-  
+  $: emailCount = disabled ? 0 : $scenarioQueue.filter(s => s.type === ScenarioType.EMAIL).length;
+  $: smsCount = disabled ? 0 : $scenarioQueue.filter(s => s.type === ScenarioType.SMS).length;
+
   // Called when email icon clicked and opens msg window
   function handleClickMessages() {
     console.log("Messages icon clicked"); //for debugging
+    if (disabled || scenarioOpen || smsCount === 0) return;
     on?.openMessages?.();
   }
 
   // Called when sms icon clicked and opens msg window
   function handleClickEmail() {
     console.log("SMS icon clicked"); // debugging
+    if (disabled || scenarioOpen || emailCount === 0) return;
     on?.openEmail?.();
   }
- 
+
+
 </script>
 
 <div class="icons">
-  <button class="icon" type="button" on:click={handleClickEmail}>
+  <button class="icon" type="button" on:click={handleClickEmail} disabled={scenarioOpen || emailCount === 0}>
     {#if emailCount > 0}
       <div class="badge">{emailCount}</div>
     {/if}
@@ -36,16 +43,24 @@
     <div class="icon-label">Email</div>
   </button>
   
-  <button class="icon" type="button" on:click={handleClickMessages}>
+  <button class="icon" type="button" on:click={handleClickMessages} disabled={scenarioOpen || smsCount === 0}>
     {#if smsCount > 0}
       <div class="badge">{smsCount}</div>
     {/if}
     <img src="/icons/chat.png" alt="SMS" class="icon-img"/>
     <div class="icon-label">Messages</div>
+
   </button>
 </div>
 
 <style>
+
+  .icon:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    filter: grayscale(70%);
+    cursor: none;
+  }
   
   .icons {
       position: absolute;
@@ -63,16 +78,31 @@
       width: 80px;
       text-align: center;
       text-decoration: none;
-      color: black;
+      color: rgb(255, 255, 255);
       background-color: transparent;
       border: none;
       cursor: pointer
+  }
+  .icon-label {
+    font-size: .9rem;
+    font-weight: 400;
+    letter-spacing: .08rem;
+    font-family: "Bagel Fat One", system-ui;
+       text-shadow:   
+      -1px -1px 0 #161548d1,
+      1px -1px 0 #0d0c2bd1,
+      -1px  1px 0 #252373d1,
+      1px  1px 0 #11103ad1;
+  }
+
+  .icon:hover {
+    color: #78a8df;
   }
 
   .icon-img {
       width: 64px;
       height: 64px;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
   }
 
   .badge {

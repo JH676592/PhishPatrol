@@ -1,113 +1,163 @@
 <script lang="ts">
-import LoginModal from '$lib/components/LoginModal.svelte'; //fix later
-import{healthbar} from '$lib/stores/stores'
-import DesktopIcons from '$lib/components/DesktopIcons.svelte';
-import MessageWindow from '$lib/components/MessageWindow.svelte';
-import InfoWindow from '$lib/components/InfoWindow.svelte';
-import { scenarioQueue, removeScenarioFromQueue } from '$lib/stores/scenarioQueue';
-import type { Scenario } from '$lib/types';
-import { ScenarioType } from '$lib/types';
-import { get } from 'svelte/store';
+  import LoginModal from '$lib/components/LoginModal.svelte';
+  import{healthbar} from '$lib/stores/stores'
+  import DesktopIcons from '$lib/components/DesktopIcons.svelte';
+  import { tokenStore } from '$lib/stores/auth';
+  import MessageWindow from '$lib/components/MessageWindow.svelte';
+  import LeaderboardModal from "$lib/components/LeaderboardModal.svelte";
+  import InfoWindow from '$lib/components/InfoWindow.svelte';
+  import { scenarioQueue, removeScenarioFromQueue, clearScenarioQueue } from '$lib/stores/scenarioQueue';
+  import type { Scenario } from '$lib/types';
+  import { ScenarioType } from '$lib/types';
+  import { get } from 'svelte/store';
+  import GameInfo from '$lib/components/GameInfo.svelte';
 
-let showMessages = false;
-let currentScenario: Scenario | null = null;
-let showLogin = true;
-let showTutorial = false;
-  
+  let showMessages = false;
+  let currentScenario: Scenario | null = null;
+  let iconsDisabled = true;
+  let showGameInfo = false;
+  let showTutorial = false;
+  let showLeaderboard = false;
 
-// Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
-function openMessages() {
-  const queue = get(scenarioQueue); //queue
-  const nextSMS = queue.find(s => s.type === ScenarioType.SMS); //first sms in queue
-  if (nextSMS) {
-    currentScenario = nextSMS; //set as current
-    showMessages = true; //show MessageWindow
-    removeScenarioFromQueue(nextSMS.id); //remove from queue
+  function logout() {
+    localStorage.removeItem('token');
+    tokenStore.set('');
+    clearScenarioQueue();
   }
-}
 
-// Same as for SMS but Email
-function openEmail() {
-  const queue = get(scenarioQueue);
-  const nextEmail = queue.find(s => s.type === ScenarioType.EMAIL);
-  if (nextEmail) {
-    currentScenario = nextEmail;
-    showMessages = true;
-    removeScenarioFromQueue(nextEmail.id);
+  // Opens next scenario for SMS from the queue from the store and displays it in MessageWindow
+  function openMessages() {
+    if (iconsDisabled) return;
+    const queue = get(scenarioQueue); //queue
+    const nextSMS = queue.find(s => s.type === ScenarioType.SMS); //first sms in queue
+    if (nextSMS) {
+      currentScenario = nextSMS; //set as current
+      showMessages = true; //show MessageWindow
+      removeScenarioFromQueue(nextSMS.id); //remove from queue
+    }
   }
-}
 
-// handles closing window when user selects continue button
-function handleComplete() {
-    showMessages = false; //hide MessageWindow
-    currentScenario = null; //clear current scenario
-}
+  // Same as for SMS but Email
+  function openEmail() {
+    if (iconsDisabled) return;
+    const queue = get(scenarioQueue);
+    const nextEmail = queue.find(s => s.type === ScenarioType.EMAIL);
+    if (nextEmail) {
+      currentScenario = nextEmail;
+      showMessages = true;
+      removeScenarioFromQueue(nextEmail.id);
+    }
+  }
 
-function toggleTutorial() {
+  // handles closing window when user selects continue button
+  function handleComplete() {
+      showMessages = false; //hide MessageWindow
+      currentScenario = null; //clear current scenario
+      //iconsDisabled = false;
+  }
+
+  function openLeaderboard() {
+    showLeaderboard = true;
+  }
+  function handleLeaderboardClose() {
+    showLeaderboard = false;
+  }
+
+  function handleStart() {
+    showGameInfo = false;
+    iconsDisabled = false;
+  }
+
+  function toggleTutorial() {
     showTutorial = !showTutorial;
-}  
+  }
 
-</script>
+  </script>
 
-<!-----------------------------DESKTOP/HOME PAGE----------------------------------------->
+  <!-----------------------------DESKTOP/HOME PAGE----------------------------------------->
 
-<head>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
-</head>
+  <head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@700&display=swap" rel="stylesheet">
+  </head>
 
-<div class="desktop">
-  <header class="header">
+  <div class="desktop">
+
+    <!---------Game Info Popup---------->
+    {#if showGameInfo}
+      <GameInfo on:startGame={handleStart}
+      onClose={() => showGameInfo = false}
+      />
+    {/if}
+
+    {#if showLeaderboard}
+    <LeaderboardModal onClose={handleLeaderboardClose} />
+    {/if}
+
+    <header class="header">
     <div class="header-content">
-      <h1>PHISH PATROL</h1>
-      <img src="/icons/fishing.png" alt="Fish" class="logo"/>
-      <!----<a href="https://www.flaticon.com/free-icons/fishing" title="fishing icons">Fishing icons created by Hilmy Abiyyu A. - Flaticon</a>-->
+      <img class="logo" src="background/logoname.png" alt="Phish Patrol logo"/>
     </div>
-  </header>
+    </header>
 
-  <!---------Desktop Icons------------>
-  <DesktopIcons on={{ openMessages: openMessages, openEmail: openEmail }}/>
+    <!---------Desktop Icons------------>
+    <DesktopIcons
+      disabled={iconsDisabled}
+      scenarioOpen={showMessages}
+      on={{ openMessages, openEmail }}/>
 
+    <!---------Message Window------------>
+    {#if showMessages && currentScenario}
+        <MessageWindow {currentScenario} onComplete={handleComplete}/>
+    {/if}
 
-  <!---------Message Window------------>
-  {#if showMessages && currentScenario}
-      <MessageWindow {currentScenario} onComplete={handleComplete} />
-  {/if}
-
-  {#if showTutorial}
+    {#if showTutorial}
       <InfoWindow onClose={toggleTutorial} />
-  {/if}
+    {/if}
 
+    <!-----------------------------Taskbar---------------------------------->
+    <div class="taskbar">
 
-  <!-----------------------------Taskbar---------------------------------->
-  <div class="taskbar">
+      <!-----------Left Items------------>
+      <div class="taskbar-left">
+        <div class="left-item">
+            <button class="play-button" on:click={() => { showGameInfo = true}}> 
+              <img src="/icons/play.png" alt="Play" class="left-icons"/>
+              <!-----<a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a>-->
+              <div class="left-label">Play</div>
+            </button>
+          </div>
+        <div class="left-item">
+          <button class="leaderboard-btn" on:click={() => { openLeaderboard(); }}>
+            <img
+              src="/icons/leaderboard.png"
+              alt="Leaderboard"
+              class="left-icons"
+            />
+            <div class="left-label">Leaderboard</div>
+          </button>
+        </div>
+	      <div class="left-item">
+          <button class="database-btn" on:click={() => { toggleTutorial(); }}>
+          <img src="/icons/book.png" alt="Database" class="left-icons"/>
+            <div class="left-label">Database</div>
+          </button>
+        </div>
+      </div>
 
-    <!-----------Left Items------------>
-    <div class="taskbar-left">
-      <div class="left-item">
-          <img src="/icons/play.png" alt="Play" class="left-icons" on:click = {()=>healthbar.update(n=>n-10)}/>
-        <!-----<a href="https://www.flaticon.com/free-icons/play-button" title="play button icons">Play button icons created by Freepik - Flaticon</a>-->
-        <div class="left-label">Play</div>
+      <!-----------Center Items-------------->
+      <div class="taskbar-center">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search database..."/>
+        </div>
       </div>
-      <div class="left-item">
-        <img src="/icons/book.png" alt="Resources" class="left-icons"/>
-        <div class="left-label">Resources</div>
-      </div>
-      <div class="left-item" on:click={toggleTutorial}>
-          <img src="/icons/tutorial.png" alt="Tutorial" class="left-icons"/>
-        <!-----<a href="https://www.flaticon.com/free-icons/video-tutorial" title="video tutorial icons">Video tutorial icons created by Freepik - Flaticon</a>-->
-        <div class="left-label">Tutorial</div>
-      </div>
-    </div>
-
-    <!-----------Center Items-------------->
-    <div class="taskbar-center">
-      <div class="search-container">
-          <input type="text" class="search-input" placeholder="Search database..."/>
-      </div>
-    </div>
 
     <!-----------Right Items------------->
     <div class="taskbar-right">
+      <div>
+        {#if $tokenStore}
+        <button class="logout-btn" on:click={logout}>Logout</button>
+        {/if}
+      </div>
       <div class="wifi">
         <img src="/icons/wifi.png" alt="Wifi" class="right-icons">
         <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
@@ -123,187 +173,238 @@ function toggleTutorial() {
       </div>
     </div>
   </div>
-  <LoginModal />
+  <LoginModal on:loginSuccess={()=> showGameInfo = true} />
 </div>
 <!--Login Modal on site launch-->
 
-      
 
-<!-----------------------------------STYLES------------------------------------->
-<style>
+  <!----------------------------------STYLES------------------------------------->
+  <style>
 
-  :global(html,body) {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: hidden;
-  }
+    :global(html,body) {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
 
-  .desktop {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    background: url('/background/desktop.png') no-repeat center center;
-    background-size: cover;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-family: 'Segoe UI', sans-serif;
-    color: white;
-    flex-wrap: wrap;
-  }
+    .desktop {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: url('/background/desktop.png') no-repeat center center;
+      background-size: cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      flex-wrap: wrap;
+    }
 
-  .header-content {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 200px;
+    }
 
-  header h1 {
-    font-family: 'Roboto Mono';
-    font-style: normal;
-    font-weight: 700;
-    font-size: 48px;
-    line-height: 140%;
-    text-align: center;
-    letter-spacing: 0.15em;
-    color: #000000;
-    mix-blend-mode: hard-light;
-    opacity: 0.8;
-  }
+    .logo {
+      width: 420px;  
+      height: auto; 
+    }
 
-  .logo {
-    height: 65px;
-    width: 65px;
-    line-height: 140%;
-    text-align: center;
+    /* Taskbar */
+    .taskbar {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      align-items: center;
+      overflow: hidden;
+      min-width: 0;
+      height: 78px;
+      padding-bottom: 6px;
+      background: #b9b2b29e;
+      flex-wrap: wrap;
+    }
 
-  }
+    .leaderboard-btn {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      line-height: normal;
+    }
 
-  /* Taskbar */
+    .leaderboard-btn:hover {
+      color: rgb(170, 105, 224);
+    }
 
-  .taskbar {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    align-items: center;
-    overflow: hidden;
-    min-width: 0;
-    height: 78px;
-    padding: 0 16px;
-    background: #b9b2b29e;
-    flex-wrap: wrap;
-  }
+    .taskbar-center, .taskbar-left, .taskbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
 
-  .taskbar-center, .taskbar-left, .taskbar-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex: 1 1 auto;
-    min-width: 0;
-  }
+    .taskbar-center {
+      justify-content: center;
+      flex: 0 1 300px;
+    }
 
-  .taskbar-center {
-    justify-content: center;
-    flex: 0 1 300px;
-  }
+    .taskbar-right {
+      justify-content: flex-end;
+    }
+    
+    /* Taskbar Left */
+    .taskbar-left {
+      display: flex;
+      gap: 40px;
+      padding: 10px;
+      flex-wrap: wrap;
+    }
 
-  .taskbar-right {
-    justify-content: flex-end;
-  }
-  
-  /* Taskbar Left */
+    .left-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      font-size: 12px;
+    }
 
-  .taskbar-left {
-    display: flex;
-    gap: 40px;
-    padding: 10px;
-    flex-wrap: wrap;
-  }
+    .play-button {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      color: inherit;
+      font: inherit;
+    }
 
-  .left-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: white;
-    cursor: pointer;
-    user-select: none;
-    font-size: 12px;
-  }
+    .play-button:hover {
+      color: rgb(204, 92, 124);
+    }
 
-  .left-icons {
-    width: 50px;
-    height: 50px;
-    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.6));
-  }
+    .database-btn {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      line-height: normal;
+    }
+    .database-btn:hover {
+      color: rgb(166, 220, 84);
+    }
 
-  .left-label {
-    margin-top: 2px;
-    font-size: 14px;
-    font-weight: 800;
-    text-align: center;  
-    letter-spacing: 1px;
-    text-shadow:   
-    -1px -1px 0 #2a2699d1,
-     1px -1px 0 #2a2699d1,
-    -1px  1px 0 #2a2699d1,
-     1px  1px 0 #2a2699d1;
-  }
+    .left-icons {
+      width: 50px;
+      height: 50px;
+      filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.6));
+    }
+
+    .left-label {
+      font-family: "Bagel Fat One", system-ui;
+      margin-top: 2px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;  
+      letter-spacing: 0.08rem;
+      text-shadow:   
+      -1px -1px 0 #161548d1,
+      1px -1px 0 #0d0c2bd1,
+      -1px  1px 0 #252373d1,
+      1px  1px 0 #11103ad1;
+    }
 
 
-  /* Search Bar */
+    /* Search Bar */
+    
+    .search-container {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      padding: 0 12px;
+      flex-wrap: wrap;
+    }
 
-  .search-container {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    padding: 0 12px;
-    flex-wrap: wrap;
-  }
+    .search-input {
+      padding: 6px 10px;
+      font-size: 15px;
+      border-radius: 6px;
+      background-color: #e0e0e0;
+      width: 100%;
+      max-width: 250%;
+      box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
+    }
 
-  .search-input {
-    padding: 6px 10px;
-    font-size: 15px;
-    border-radius: 6px;
-    background-color: #e0e0e0;
-    width: 100%;
-    max-width: 250%;
-    box-shadow: inset 1px 1px 2px 2px rgba(3, 219, 89, 0.426);
-  }
+    /* Logout Button */
+    .logout-btn {
+      background-color: #ef4444;
+      color: white;
+      font-family: "Montserrat", sans-serif;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 12px;
+    }
 
-  /* Taskbar Right */
-  
-  .taskbar-right {
-    display: flex;
-    align-items: center;
-    padding: 5px;
-  }
+    .logout-btn:hover {
+      background-color: #dc2626;
+    }
 
-  .right-icons {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-    padding: 12px;
-  }
+    /* Taskbar Right */
+    
+    .taskbar-right {
+      display: flex;
+      align-items: center;
+      padding: 5px;
+    }
 
-  .datetime {
-    display: flex;
-    padding: 10px;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-    color: rgb(0, 0, 0);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 1.1px;
-    text-shadow:   
-    .5px 0px 0 rgba(255, 255, 255, 0.653),
-     0px 0px 0 rgba(255, 255, 255, 0.653),
-    0px  0px 0 rgba(255, 255, 255, 0.653),
-     0px  0px 0 rgba(255, 255, 255, 0.653)
-  }
+    .right-icons {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      padding: 12px;
+    }
 
+    .datetime {
+      display: flex;
+      padding: 10px;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      color: rgb(0, 0, 0);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1.1px;
+      text-shadow:   
+      .5px 0px 0 rgba(255, 255, 255, 0.653),
+      0px 0px 0 rgba(255, 255, 255, 0.653),
+      0px  0px 0 rgba(255, 255, 255, 0.653),
+      0px  0px 0 rgba(255, 255, 255, 0.653)   
+    }
+    
   #battery {
     height: 20px;
     width: 30px;
@@ -333,4 +434,4 @@ function toggleTutorial() {
       left: 1px;
     }
   }
-</style>
+  </style>
