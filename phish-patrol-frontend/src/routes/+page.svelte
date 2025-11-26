@@ -175,6 +175,9 @@
   </div>
   <LoginModal on:loginSuccess={()=> showGameInfo = true} />
 </div>
+<div id="gameover" class:endgame={$healthbar==0}>
+  <h1>You've been Phished!!!</h1>
+</div>
 <!--Login Modal on site launch-->
 
 
@@ -432,6 +435,20 @@
       position: absolute;
       top: 2px;
       left: 1px;
+    }
+  }
+
+  #gameover {
+    display: none;
+    position:absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: maroon;
+
+    &.endgame{
+      display: block;
     }
   }
   </style>
