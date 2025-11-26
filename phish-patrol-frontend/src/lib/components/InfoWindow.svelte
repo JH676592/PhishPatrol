@@ -12,7 +12,7 @@
   <div class="window-body">
     <div class="content-container">
       <div class="mascot-container">
-        <img src={mascot} alt="Phish Patrol Mascot" class="mascot" />
+        <img src="{mascot}" alt="Phish Patrol Mascot" class="mascot" />
         <div class="mascot-caption">
           "Stay vigilant, Agent! Here is your field guide."
         </div>

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import LoginModal from '$lib/components/LoginModal.svelte'; 
+  import LoginModal from '$lib/components/LoginModal.svelte';
+  import{healthbar} from '$lib/stores/stores'
   import DesktopIcons from '$lib/components/DesktopIcons.svelte';
   import { tokenStore } from '$lib/stores/auth';
   import MessageWindow from '$lib/components/MessageWindow.svelte';
@@ -162,7 +163,8 @@
         <!---<a href="https://www.flaticon.com/free-icons/wifi" title="wifi icons">Wifi icons created by Aldo Cervantes - Flaticon</a>-->
         </div>
       <div class="battery">
-        <img src="/icons/battery.png" alt="Battery" class="right-icons"/>
+        <!-- <img src="/icons/battery.png" alt="Battery" class="right-icons"/> -->
+        <div id = "battery" style:--life="{$healthbar-10}%"></div>
         <!--<a href="https://www.flaticon.com/free-icons/battery" title="battery icons">Battery icons created by Stockio - Flaticon</a>-->
       </div>
       <div class="datetime">
@@ -172,6 +174,9 @@
     </div>
   </div>
   <LoginModal on:loginSuccess={()=> showGameInfo = true} />
+</div>
+<div id="gameover" class:endgame={$healthbar==0}>
+  <h1>You've been Phished!!!</h1>
 </div>
 <!--Login Modal on site launch-->
 
@@ -400,6 +405,50 @@
       .5px 0px 0 rgba(255, 255, 255, 0.653),
       0px 0px 0 rgba(255, 255, 255, 0.653),
       0px  0px 0 rgba(255, 255, 255, 0.653),
-      0px  0px 0 rgba(255, 255, 255, 0.653)
+      0px  0px 0 rgba(255, 255, 255, 0.653)   
     }
+    
+  #battery {
+    height: 20px;
+    width: 30px;
+    border: 2px solid black;
+    border-radius: 5px;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      height: 10px;
+      width: 7px;
+      left: 100%;
+      top: 5px;
+      background-color: black;
+      border-radius: 4px;
+
+    }
+
+    &::before{
+      content: "";
+      height: 16px;
+      width: var(--life);
+      background-color: black;
+      position: absolute;
+      top: 2px;
+      left: 1px;
+    }
+  }
+
+  #gameover {
+    display: none;
+    position:absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: maroon;
+
+    &.endgame{
+      display: block;
+    }
+  }
   </style>

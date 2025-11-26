@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { Scenario } from '$lib/types';
+  import{healthbar} from '$lib/stores/stores'
   import DesktopIcons from './DesktopIcons.svelte';
 
   export let currentScenario: Scenario; // current sms or email scenario
@@ -52,6 +53,7 @@
     isAnswered = true;
 
     const isCorrect = choice === currentScenario.isScam;
+    healthbar.update(n=> Math.max(0, Math.min(100, isCorrect ? n+10 : n-10)))
 
     playSound(isCorrect);
 
