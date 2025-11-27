@@ -1,5 +1,5 @@
 <script lang="ts">
-  import mascot from '$lib/assets/mascot.webp';
+  import mascot from '$lib/assets/ohno.webp';
   export let onClose: () => void;
 </script>
 
