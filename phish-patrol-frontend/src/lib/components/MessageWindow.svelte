@@ -53,7 +53,7 @@
     isAnswered = true;
 
     const isCorrect = choice === currentScenario.isScam;
-    healthbar.update(n=> Math.max(0, Math.min(100, isCorrect ? n+10 : n-10)))
+    healthbar.update(n=> Math.max(0, Math.min(100, isCorrect ? n+50 : n-50)))
 
     playSound(isCorrect);
 

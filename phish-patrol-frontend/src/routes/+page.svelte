@@ -11,6 +11,7 @@
   import { ScenarioType } from '$lib/types';
   import { get } from 'svelte/store';
   import GameInfo from '$lib/components/GameInfo.svelte';
+  import ohno from '$lib/assets/ohno.webp';
 
   let showMessages = false;
   let currentScenario: Scenario | null = null;
@@ -175,8 +176,14 @@
   </div>
   <LoginModal on:loginSuccess={()=> showGameInfo = true} />
 </div>
+{#if $healthbar==0}
+<div id='overlay'></div>
+{/if}
 <div id="gameover" class:endgame={$healthbar==0}>
   <h1>You've been Phished!!!</h1>
+  <img src="{ohno}" alt="" class="mascot">
+  <br>
+  <button on:click={()=> healthbar.set(100)}>Play again?</button>
 </div>
 <!--Login Modal on site launch-->
 
@@ -437,18 +444,49 @@
       left: 1px;
     }
   }
+  .mascot {
+    width: 150px;
+    height: auto;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+  }
 
   #gameover {
     display: none;
     position:absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: maroon;
+    padding: 20px;
+    top: 50%;
+    text-align:center;
+    left: 50%;
+    width: 500px;
+    margin: -170px -270px;
+    font-family: 'Bagel Fat One'; 
+
+   background-color: aliceblue;
+   border: 10px solid #5d2e89;
+   border-radius: 20px;
+   box-shadow: 0px 0px 10px 5px black;
+
 
     &.endgame{
       display: block;
     }
+    button{
+      font-size: 20px;
+      border: 3px solid #5d2e89;
+      border-radius: 5px;
+      font-weight: 100;
+      font-family: 'Bagel Fat One'; 
+
+    }
+  }
+  #overlay{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(200,200,200,0.5);
+  
   }
   </style>
