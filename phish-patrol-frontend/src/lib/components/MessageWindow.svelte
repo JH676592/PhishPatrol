@@ -2,6 +2,9 @@
   import type { Scenario } from '$lib/types';
   import{healthbar} from '$lib/stores/stores'
   import DesktopIcons from './DesktopIcons.svelte';
+  import thinkingMascot from '$lib/assets/thinking.webp';
+  import hoorayMascot from '$lib/assets/hooray.webp';
+  import ohnoMascot from '$lib/assets/ohno.webp';
 
   export let currentScenario: Scenario; // current sms or email scenario
   export let onComplete: () => void; 
@@ -14,6 +17,13 @@
   let index = 0;
   let typedExplanation = "";
   let showCursor = true;
+
+
+  $: mascotImage = !isAnswered 
+    ? thinkingMascot
+    : (userChoice === currentScenario.isScam 
+        ? hoorayMascot
+        : ohnoMascot);
 
   // Formatting for the emails and sms messages, work in progress
   function formatMessage(content: string): string {
@@ -109,38 +119,54 @@
 <audio id="incorrect-sound" src="/sounds/incorrect.wav" preload="auto"></audio>
 
 <div class="window">
-    <div class="window-header">
-        <span>NEW {currentScenario.type}</span>
-    </div>
+  <div class="window-header">
+    <span>NEW {currentScenario.type}</span>
+  </div>
 
-    <div class="window-body">
+  <div class="window-body">
+    <div class="layout-container">
+      <div class="mascot-sidebar">
+        <img src="{mascotImage}" alt="Phish Patrol Mascot" class="mascot-img" />
+        <div class="mascot-bubble" class:bubble-correct={isAnswered && userChoice === currentScenario.isScam} class:bubble-wrong={isAnswered && userChoice !== currentScenario.isScam}>
+          {#if !isAnswered}
+            Analyzing...
+          {:else if userChoice === currentScenario.isScam}
+            Great Job!
+          {:else}
+            Stay Alert!
+          {/if}
+        </div>
+      </div>
+      <div class="content-column">
         <div class="message-content">
-            {@html formatMessage(currentScenario.content)}
+          {@html formatMessage(currentScenario.content)}
         </div>
 
         {#if !isAnswered}
-            <div class="button-group">
-                <button class="btn btn-scam" on:click={() => handleAnswer(true)}>Scam</button>
-                <button class="btn btn-legit" on:click={() => handleAnswer(false)}>Legit</button>
-            </div>
+          <div class="button-group">
+            <button class="btn btn-scam" on:click={() => handleAnswer(true)}>Scam</button>
+            <button class="btn btn-legit" on:click={() => handleAnswer(false)}>Legit</button>
+          </div>
         {:else}
-            <div class="feedback" bind:this={feedbackRef}>
-              <div class="feedback-text"
-                class:correct={userChoice === currentScenario.isScam}
-                class:incorrect={userChoice !== currentScenario.isScam}
-                >
-                {feedbackMessage}
-              </div>
-              <div class="explanation">
-                {typedExplanation}<span class="typing-cursor" class:hidden={!showCursor}>|</span>
-              </div>
+          <div class="feedback" bind:this={feedbackRef}>
+            <div class="feedback-text"
+              class:correct={userChoice === currentScenario.isScam}
+              class:incorrect={userChoice !== currentScenario.isScam}
+            >
+              {feedbackMessage}
+            </div>
+            <div class="explanation">
+              {typedExplanation}<span class="typing-cursor" class:hidden={!showCursor}>|</span>
+            </div>
 
-              <div class="continue-container">
-                <button class="btn btn-next" on:click={handleContinue}>Continue</button>
+            <div class="continue-container">
+              <button class="btn btn-next" on:click={handleContinue}>Continue</button>
             </div>
           </div>
         {/if}
+      </div>
     </div>
+  </div>
 </div>
 
 <style>
@@ -196,6 +222,62 @@
   overflow-x: hidden; 
   box-sizing: border-box;
   height: calc(80vh-60px);
+}
+
+.layout-container {
+  display: flex;
+  gap: 25px;
+  align-items: flex-start;
+}
+
+.mascot-sidebar {
+  flex: 0 0 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+  position: sticky;
+  top: 0;
+}
+
+.mascot-img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 4px 5px rgba(0,0,0,0.2));
+  transition: transform 0.3s ease;
+}
+
+.mascot-img:hover {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+.mascot-bubble {
+  background: #e8eaf6;
+  padding: 8px 12px;
+  border-radius: 12px;
+  border-bottom-left-radius: 2px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #3c1f7a;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bubble-correct {
+  background: #d4edda;
+  color: #155724;
+}
+
+.bubble-wrong {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.content-column {
+  flex: 1;
+  min-width: 0;
 }
 
 .message-content {
