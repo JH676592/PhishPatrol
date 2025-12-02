@@ -5,9 +5,30 @@
   import thinkingMascot from '$lib/assets/thinking.webp';
   import hoorayMascot from '$lib/assets/hooray.webp';
   import ohnoMascot from '$lib/assets/ohno.webp';
+  import { get } from 'svelte/store';
+  import { tokenStore } from '$lib/stores/auth';
 
   export let currentScenario: Scenario; // current sms or email scenario
   export let onComplete: () => void; 
+
+  const SCORE_INCREMENT = 10;
+
+  function getUsername(): string | null {
+    const token = get(tokenStore);
+      if (token && token.length > 0) {
+          try {
+              const base64Url = token.split('.')[1];
+              const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              const payload = JSON.parse(window.atob(base64));
+              
+              return payload.sub || payload.username || null;
+          } catch (e) {
+              console.error("Failed to decode token for username:", e);
+              return null;
+          }
+      }
+      return null;
+  }
 
   let isAnswered = false; // tracks user answer
   let userChoice: boolean | null = null; // stores user answer
@@ -24,6 +45,36 @@
     : (userChoice === currentScenario.isScam 
         ? hoorayMascot
         : ohnoMascot);
+
+  async function saveScoreUpdate(username: string, scoreIncrement: number) {
+      if (!username) {
+          console.error("Cannot save score: Username not found.");
+          return;
+      }
+      
+      const payload = {
+          username: username,
+          scoreIncrement: scoreIncrement,
+      };
+
+      try {
+          const response = await fetch('http://localhost:8080/auth/save-score', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+              console.error("Failed to save score:", response.status);
+          } else {
+              console.log(`Score increment of ${scoreIncrement} sent for ${username}.`);
+          }
+      } catch (error) {
+          console.error("API error during score save:", error);
+      }
+  }
 
   // Formatting for the emails and sms messages, work in progress
   function formatMessage(content: string): string {
@@ -63,7 +114,12 @@
     isAnswered = true;
 
     const isCorrect = choice === currentScenario.isScam;
+    const activeUsername = getUsername();
     healthbar.update(n=> Math.max(0, Math.min(100, isCorrect ? n+20 : n-20)))
+
+    if (isCorrect && activeUsername) {
+        saveScoreUpdate(activeUsername, SCORE_INCREMENT);
+    }
 
     playSound(isCorrect);
 

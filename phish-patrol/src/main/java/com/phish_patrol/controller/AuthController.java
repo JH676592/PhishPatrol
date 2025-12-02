@@ -70,48 +70,33 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/save-score")
-    public ResponseEntity<String> saveScore(@RequestBody ScoreRequest request) {
-
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setUsername(request.getUsername());
-                    newUser.setScore(0); // Start with 0
-                    // NOTE: This user won't have a password yet!
-                    return newUser;
-                });
-
-        if (request.getScore() > user.getScore()) {
-            user.setScore(request.getScore());
-
-            userRepository.save(user);
-
-            return ResponseEntity.ok("Score saved successfully!");
-        }
-
-        return ResponseEntity.ok("Score received (not a new high score).");
-    }
-
     static class ScoreRequest {
         private String username;
-        private int score;
+        private int scoreIncrement;
 
-        public String getUsername() {
-            return username;
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+        public int getScoreIncrement() { return scoreIncrement; }
+        public void setScoreIncrement(int scoreIncrement) { this.scoreIncrement = scoreIncrement; }
+    }
+
+    @PostMapping("/save-score")
+    public ResponseEntity<String> saveScore(@RequestBody ScoreRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElse(null); 
+        
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found for scoring.");
         }
 
-        public void setUsername(String username) {
-            this.username = username;
-        }
+        int currentScore = user.getScore();
+        int pointsGained = request.getScoreIncrement();
+        int newScore = currentScore + pointsGained;
+        
+        user.setScore(newScore);
+        userRepository.save(user);
 
-        public int getScore() {
-            return score;
-        }
-
-        public void setScore(int score) {
-            this.score = score;
-        }
+        return ResponseEntity.ok("Score updated to " + newScore + ".");
     }
 
     @GetMapping("/leaderboard")
